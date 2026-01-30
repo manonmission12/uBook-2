@@ -27,8 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (currentUser) {
         // --- JIKA MEMBER ---
         if(navLinks) {
+            // UPDATED: Menambahkan Tombol "Profil" di samping Beranda
             navLinks.innerHTML = `
                 <a href="index.html" class="nav-link active">Beranda</a>
+                <a href="profile.html" class="nav-link">Profil</a>
                 <a href="upload.html" class="nav-link">Upload Buku</a>
             `;
         }
@@ -77,10 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
+            // LOGOUT -> Redirect ke Login.html
             document.getElementById('logoutBtn').addEventListener('click', () => {
                 if(confirm('Yakin ingin keluar?')) {
                     localStorage.removeItem('currentUser');
-                    window.location.reload(); 
+                    window.location.href = 'login.html';
                 }
             });
         }
@@ -166,9 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // --- LOGIKA TOMBOL SIMPAN ---
-            // Cek apakah buku ini ada di savedBooks (berdasarkan ID)
             const isSaved = savedBooks.some(b => b.id.toString() === book.id.toString());
-            const saveIconClass = isSaved ? 'fas' : 'far'; // Solid vs Outline
+            const saveIconClass = isSaved ? 'fas' : 'far';
             const activeClass = isSaved ? 'active' : '';
 
             card.innerHTML = `
@@ -188,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             
-            // Klik Kartu -> Buka Modal (Kecuali klik tombol save)
             card.addEventListener('click', (e) => {
                 if (e.target.closest('.btn-save-book')) return;
                 openModal(book);
@@ -197,56 +198,47 @@ document.addEventListener('DOMContentLoaded', () => {
             bookGrid.appendChild(card);
         });
 
-        // --- EVENT LISTENER TOMBOL SIMPAN ---
+        // Event Listener Save Button
         document.querySelectorAll('.btn-save-book').forEach(btn => {
             btn.addEventListener('click', function(e) {
-                e.stopPropagation(); // Stop agar modal tidak terbuka
-                
+                e.stopPropagation();
                 if (!currentUser) {
                     if(confirm("Login dulu yuk untuk menyimpan buku!")) window.location.href = 'login.html';
                     return;
                 }
 
                 const bookId = this.dataset.id;
-                // Cari buku lengkap berdasarkan ID dari allBooks
                 const bookToSave = allBooks.find(b => b.id.toString() === bookId.toString());
 
-                if (!bookToSave) return; // Safety check
+                if (!bookToSave) return;
 
-                // Cek status simpan di array
                 const index = savedBooks.findIndex(b => b.id.toString() === bookToSave.id.toString());
 
                 if (index !== -1) {
-                    // Hapus (Unsave)
-                    savedBooks.splice(index, 1);
+                    savedBooks.splice(index, 1); // Unsave
                     this.classList.remove('active');
                     this.querySelector('i').classList.replace('fas', 'far');
                 } else {
-                    // Simpan (Save) - PENTING: Simpan Objek Lengkap!
-                    savedBooks.push(bookToSave);
+                    savedBooks.push(bookToSave); // Save
                     this.classList.add('active');
                     this.querySelector('i').classList.replace('far', 'fas');
                 }
-
-                // Update LocalStorage
                 localStorage.setItem(`savedBooks_${currentUser}`, JSON.stringify(savedBooks));
             });
         });
     }
 
-    // --- 4. MODAL & LOGIKA RATING INTERAKTIF ---
+    // --- 4. MODAL & RATING ---
     const modal = document.getElementById('bookModal');
     const feedback = document.getElementById('ratingFeedback');
 
     function openModal(book) {
         if (!modal) return;
-        
         document.getElementById('modalImg').src = book.img || book.image || book.cover;
         document.getElementById('modalTitle').innerText = book.title;
         document.getElementById('modalAuthor').innerText = book.author;
         document.getElementById('modalBadges').innerHTML = `<span class="badge-cat">${book.category}</span>`;
         
-        // Setup Tombol Baca
         const readBtn = document.getElementById('readBtn');
         const newReadBtn = readBtn.cloneNode(true);
         readBtn.parentNode.replaceChild(newReadBtn, readBtn);
@@ -264,16 +256,14 @@ document.addEventListener('DOMContentLoaded', () => {
             } else { alert("File tidak tersedia."); }
         };
 
-        // --- SETUP RATING DI MODAL ---
+        // Modal Rating Logic
         const modalStars = document.querySelectorAll('#modalStars i');
         const myRating = userRatings[book.title];
         const currentVal = myRating ? myRating.score : 0;
 
-        // Reset Tampilan Bintang Modal
         updateModalStars(currentVal);
         feedback.innerText = myRating ? "Kamu sudah memberi rating ini." : "Sentuh bintang untuk menilai.";
 
-        // Tambah Listener
         modalStars.forEach(star => {
             star.onclick = function() {
                 if (!currentUser) {
@@ -281,15 +271,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 const val = parseInt(this.getAttribute('data-val'));
-                
-                // Simpan Rating
                 userRatings[book.title] = { score: val, date: new Date().toISOString() };
                 localStorage.setItem('userRatings', JSON.stringify(userRatings));
-                
                 updateModalStars(val);
                 feedback.innerText = "Terima kasih! Rating tersimpan.";
-                
-                // Refresh Grid di belakang layar agar bintang di kartu update
                 renderBooks(searchInput.value, categoryFilter.value);
             }
         });

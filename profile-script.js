@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('statUploads').innerText = uploadedBooks.length;
     renderList('userBookGrid', uploadedBooks, "Kamu belum mengupload buku.");
 
-    // B. Buku yang Disimpan (Favorit) - BARU
+    // B. Buku yang Disimpan (Favorit)
     const savedBooks = JSON.parse(localStorage.getItem(`savedBooks_${currentUser}`) || '[]');
     document.getElementById('statSaved').innerText = savedBooks.length;
     renderList('savedBookGrid', savedBooks, "Belum ada buku yang disimpan.");
@@ -75,11 +75,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 4. Logout
+    // 4. LOGIKA LOGOUT (UPDATED: Redirect ke login.html)
     document.getElementById('logoutBtn').addEventListener('click', () => {
         if(confirm('Keluar akun?')) {
             localStorage.removeItem('currentUser');
-            window.location.href = 'index.html';
+            window.location.href = 'login.html'; // <--- PERUBAHAN DISINI
         }
     });
 

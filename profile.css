@@ -2,13 +2,13 @@
 
 /* 1. CONTAINER UTAMA (LAYOUT GRID) */
 .profile-container {
-    max-width: 1000px; /* Sedikit lebih lebar agar muat 2 kolom nyaman */
+    max-width: 1000px;
     margin: 40px auto;
     padding: 0 20px;
     display: grid;
-    grid-template-columns: 300px 1fr; /* Kiri Fixed 300px, Kanan sisa ruang */
+    grid-template-columns: 300px 1fr;
     gap: 30px;
-    align-items: start; /* Supaya elemen start dari atas */
+    align-items: start;
 }
 
 /* 2. KARTU PROFIL (KIRI) */
@@ -19,7 +19,6 @@
     padding: 30px;
     text-align: center;
     box-shadow: var(--shadow);
-    /* Membuat kartu tetap terlihat saat scroll daftar buku */
     position: sticky;
     top: 100px; 
     z-index: 10;
@@ -29,7 +28,7 @@
 .avatar-wrapper {
     position: relative;
     width: 110px;
-    margin: 0 auto 15px;
+    margin: 0 auto 10px; /* Kurangi margin bawah dikit biar deket sama hint */
 }
 
 .avatar-large {
@@ -67,6 +66,15 @@
     transform: scale(1.1);
     background: #2563eb;
 }
+
+/* TEKS HINT UKURAN FOTO (BARU) */
+.photo-hint {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-style: italic;
+}
 /* -------------------------- */
 
 .profile-header h1 {
@@ -103,10 +111,10 @@
 .profile-content-right {
     display: flex;
     flex-direction: column;
-    gap: 30px; /* Jarak antar section (Favorit & Upload) */
+    gap: 30px; 
 }
 
-/* SECTION BUKU (FAVORIT & UPLOAD) */
+/* SECTION BUKU */
 .user-uploads-section {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -121,7 +129,7 @@
     border-bottom: 1px solid var(--border); padding-bottom: 15px;
 }
 
-/* GRID MINI UNTUK BUKU DI PROFIL */
+/* GRID MINI */
 .book-grid-mini {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -163,33 +171,20 @@
     grid-column: 1 / -1; 
 }
 
-/* TOMBOL TAMBAH BUKU (Jika ada) */
-.btn-add-book {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 10px 20px; margin-top: 20px;
-    background: var(--text-primary); color: var(--bg-card);
-    border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 0.9rem;
-    transition: 0.3s;
-}
-.btn-add-book:hover { opacity: 0.9; transform: translateY(-2px); }
-
 /* 4. RESPONSIF (MOBILE) */
 @media (max-width: 850px) {
     .profile-container { 
-        grid-template-columns: 1fr; /* Jadi 1 kolom */
+        grid-template-columns: 1fr; 
         gap: 20px; 
     }
-    
     .profile-card { 
-        position: static; /* Tidak sticky di mobile */
+        position: static; 
         width: 100%;
         box-sizing: border-box;
     }
-    
     .profile-content-right {
         width: 100%;
     }
-
     .book-grid-mini { 
         grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); 
     }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Buku - Era Baru Membaca</title>
+    <title>Upload Buku</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="upload.css">
 </head>
 <body>
-
+    
     <nav class="navbar">
         <div class="nav-brand">
             <a href="index.html" style="text-decoration: none; color: inherit;">
@@ -24,58 +24,89 @@
         </div>
     </nav>
 
-    <div class="upload-wrapper">
-        <div class="upload-card">
-            <div class="upload-header">
-                <div class="icon-circle"><i class="fas fa-cloud-upload-alt"></i></div>
-                <h1>Upload Buku Baru</h1>
-                <p>Bagikan koleksi bukumu kepada dunia.</p>
+    <div class="upload-container">
+        <div class="upload-header">
+            <h1 class="page-title">Bagikan Bukumu</h1>
+            <p class="page-subtitle">Isi detail buku di bawah ini</p>
+        </div>
+
+        <form id="uploadForm" class="upload-form">
+            <div class="form-group">
+                <label>Judul Buku</label>
+                <input type="text" id="bookTitle" placeholder="Contoh: Belajar Javascript" required>
             </div>
 
-            <form id="uploadForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Judul Buku</label>
-                        <input type="text" id="bookTitle" placeholder="Contoh: Belajar Python" required>
-                    </div>
+            <div class="form-group">
+                <label>Penulis</label>
+                <input type="text" id="bookAuthor" placeholder="Nama Penulis" required>
+            </div>
 
-                    <div class="form-group">
-                        <label>Penulis</label>
-                        <input type="text" id="bookAuthor" placeholder="Nama Penulis" required>
-                    </div>
+            <div class="form-group">
+                <label>Kategori</label>
+                <select id="bookCategory">
+                    <option value="Bisnis">Bisnis</option>
+                    <option value="Filsafat">Filsafat</option>
+                    <option value="Self-Improvement">Self-Improvement</option>
+                    <option value="Fiksi">Fiksi</option>
+                    <option value="Teknologi">Teknologi</option>
+                </select>
+            </div>
 
-                    <div class="form-group">
-                        <label>Kategori</label>
-                        <select id="bookCategory">
-                            <option value="Bisnis">Bisnis</option>
-                            <option value="Filsafat">Filsafat</option>
-                            <option value="Self-Improvement">Self-Improvement</option>
-                            <option value="Fiksi">Fiksi</option>
-                            <option value="Teknologi">Teknologi</option>
-                        </select>
-                    </div>
+            <div class="form-group">
+                <label>Link Gambar Cover (URL)</label>
+                <input type="url" id="bookCover" placeholder="https://..." required>
+                <small>Pastikan link gambar berakhiran .jpg atau .png</small>
+            </div>
 
-                    <div class="form-group full-width">
-                        <label>Link File PDF (URL)</label>
-                        <input type="url" id="bookPdf" placeholder="https://example.com/buku.pdf" required>
-                        <small style="color: var(--text-tertiary);">*Pastikan link publik dan berakhiran .pdf</small>
-                    </div>
+            <div class="form-group">
+                <label>Link File PDF (URL)</label>
+                <input type="url" id="bookFile" placeholder="https://..." required>
+                <small>Masukkan link Google Drive (Public) atau direct link PDF</small>
+            </div>
 
-                    <div class="form-group full-width">
-                        <label>Link Gambar Cover (URL)</label>
-                        <input type="url" id="bookCover" placeholder="https://example.com/cover.jpg">
-                    </div>
-                </div>
-
-                <div class="form-actions">
-                    <a href="index.html" class="btn-cancel">Batal</a>
-                    <button type="submit" class="btn-submit">
-                        <i class="fas fa-upload"></i> Upload Sekarang
-                    </button>
-                </div>
-            </form>
-        </div>
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-cloud-upload-alt"></i> Upload Sekarang
+            </button>
+        </form>
     </div>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-section brand">
+                <h3><i class="fas fa-book-reader"></i> EraBaru<span class="highlight">Membaca</span></h3>
+                <p>Platform perpustakaan digital masa depan untuk generasi pembelajar.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section links">
+                <h4>Jelajahi</h4>
+                <ul>
+                    <li><a href="index.html">Beranda</a></li>
+                    <li><a href="upload.html">Upload Buku</a></li>
+                    <li><a href="profile.html">Profil Saya</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section links">
+                <h4>Bantuan</h4>
+                <ul>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Syarat & Ketentuan</a></li>
+                    <li><a href="#">Kebijakan Privasi</a></li>
+                    <li><a href="#">Hubungi Kami</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 EraBaruMembaca. All rights reserved.</p>
+        </div>
+    </footer>
 
     <script src="upload-script.js"></script>
 </body>

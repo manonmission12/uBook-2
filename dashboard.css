@@ -106,7 +106,7 @@
 .interactive-stars { display: flex; gap: 3px; }
 .interactive-stars i { font-size: 1rem; color: #e5e7eb; } /* Abu-abu */
 .interactive-stars i.filled { color: #f59e0b; } /* Emas */
-.interactive-stars i.user-filled { color: #3b82f6; } /* Biru (Punya User) */
+.interactive-stars i.user-filled { color: #f59e0b; } /* Biru (Punya User) */
 .rating-number { font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); margin-left: 5px; }
 
 /* 4. MODAL POPUP */
