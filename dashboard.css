@@ -50,7 +50,7 @@
     border: 1px solid var(--border); transition: all 0.3s ease;
     display: flex; flex-direction: column; cursor: pointer;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    position: relative; /* Penting agar tombol simpan bisa diposisikan absolute */
+    position: relative; /* Wajib relative agar tombol simpan bisa absolute */
 }
 .book-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-color: var(--text-primary); }
 
@@ -59,10 +59,11 @@
     border-bottom: 1px solid var(--border); 
 }
 
-/* --- TOMBOL SIMPAN (UPDATE POSISI: KANAN BAWAH GAMBAR) --- */
+/* --- TOMBOL SIMPAN (POSISI KANAN BAWAH GAMBAR) --- */
 .btn-save-book {
     position: absolute;
-    top: 235px; /* Sesuaikan agar pas di pojok kanan bawah GAMBAR (tinggi gambar 280px) */
+    /* Tinggi gambar 280px. Kita taruh di 235px supaya pas di pojok kanan bawah gambar */
+    top: 235px; 
     right: 10px;
     width: 38px; height: 38px;
     background: rgba(255, 255, 255, 0.95);
@@ -79,7 +80,7 @@
 .btn-save-book:hover { transform: scale(1.15); background: #fff; }
 .btn-save-book.active { color: #ef4444; border-color: #ef4444; /* Merah hati saat disimpan */ }
 .btn-save-book i { font-size: 1.2rem; pointer-events: none; }
-/* ---------------------------- */
+/* ------------------------------------------------ */
 
 .book-info { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
 .book-info h3 { font-size: 1rem; line-height: 1.4; color: var(--text-primary); margin-bottom: 6px; font-weight: 700; }
@@ -92,7 +93,7 @@
     width: fit-content; margin-bottom: 8px;
 }
 
-/* --- CARD FOOTER (Rating Tampilan) --- */
+/* --- CARD FOOTER & RATING DISPLAY (READ ONLY) --- */
 .card-footer { 
     margin-top: auto; 
     display: flex; 
@@ -103,9 +104,9 @@
 }
 
 .interactive-stars { display: flex; gap: 3px; }
-.interactive-stars i { font-size: 1rem; color: #e5e7eb; }
-.interactive-stars i.filled { color: #f59e0b; /* Emas (Default) */ }
-.interactive-stars i.user-filled { color: #3b82f6; /* Biru (User) */ }
+.interactive-stars i { font-size: 1rem; color: #e5e7eb; } /* Abu-abu */
+.interactive-stars i.filled { color: #f59e0b; } /* Emas */
+.interactive-stars i.user-filled { color: #3b82f6; } /* Biru (Punya User) */
 .rating-number { font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); margin-left: 5px; }
 
 /* 4. MODAL POPUP */
@@ -175,14 +176,14 @@
 .nav-avatar-btn i { font-size: 1.2rem; color: var(--text-secondary); }
 
 .profile-dropdown {
-    position: absolute; top: 60px; right: 0; width: 240px;
-    background: var(--bg-card); border: 1px solid var(--border);
+    position: absolute; top: 60px; right: 0;
+    width: 240px; background: var(--bg-card); border: 1px solid var(--border);
     border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.15);
     display: none; flex-direction: column; overflow: hidden; z-index: 2000;
-    animation: slideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: slideDown 0.2s ease;
 }
 .profile-dropdown.active { display: flex; }
-@keyframes slideDown { from { opacity: 0; transform: translateY(-10px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
 .dropdown-header { padding: 20px; border-bottom: 1px solid var(--border); background: var(--bg-input); }
 .dropdown-header p { margin: 0; font-size: 0.85rem; color: var(--text-secondary); }

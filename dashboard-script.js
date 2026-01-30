@@ -66,15 +66,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const menuBtn = document.getElementById('profileMenuBtn');
             const dropdown = document.getElementById('profileDropdown');
             
-            menuBtn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('active'); });
-            document.addEventListener('click', (e) => { if (!menuBtn.contains(e.target)) dropdown.classList.remove('active'); });
+            menuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('active');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!menuBtn.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove('active');
+                }
+            });
+
             document.getElementById('logoutBtn').addEventListener('click', () => {
-                if(confirm('Yakin ingin keluar?')) { localStorage.removeItem('currentUser'); window.location.reload(); }
+                if(confirm('Yakin ingin keluar?')) {
+                    localStorage.removeItem('currentUser');
+                    window.location.reload(); 
+                }
             });
         }
     } else {
         // --- JIKA TAMU ---
         if(navLinks) navLinks.innerHTML = `<a href="index.html" class="nav-link active">Beranda</a>`;
+        
         if(authButtons) {
             authButtons.innerHTML = `
                 <a href="login.html" class="nav-btn" style="text-decoration:none; color:var(--text-primary); margin-right:15px; font-weight:600;">Masuk</a>
@@ -83,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 2. DATA BUKU ---
+    // --- 2. DATA 16 BUKU BAWAAN (DEFAULT) ---
     const defaultBooks = [
         { id: "B1", title: "Filosofi Teras", author: "Henry Manampiring", category: "Filsafat", img: "covers/filosofi teras.png", pdf: "books/1. Filosofi Teras.pdf", rating: 4.8 },
         { id: "B2", title: "This is Marketing", author: "Seth Godin", category: "Bisnis", img: "covers/this is marketing.png", pdf: "books/2. This is marketing.pdf", rating: 4.6 },
@@ -106,12 +119,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let uploadedBooks = JSON.parse(localStorage.getItem('myUploadedBooks') || '[]');
     let allBooks = [...uploadedBooks.reverse(), ...defaultBooks]; 
 
-    // --- 3. RENDER BUKU + TOMBOL SAVE ---
+    // --- 3. RENDER BUKU (GRID) ---
     const bookGrid = document.getElementById('bookGrid');
     const searchInput = document.getElementById('searchInput');
     const categoryFilter = document.getElementById('categoryFilter');
 
-    // Ambil Data Rating & Simpan
+    // Ambil Data Rating & Simpan dari LocalStorage
     const userRatings = JSON.parse(localStorage.getItem('userRatings') || '{}');
     let savedBooks = JSON.parse(localStorage.getItem(`savedBooks_${currentUser}`) || '[]');
 
@@ -127,7 +140,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (filtered.length === 0) {
-            bookGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; margin-top:40px; color:var(--text-tertiary);"><p>Buku tidak ditemukan.</p></div>`;
+            bookGrid.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; margin-top: 40px; color: var(--text-tertiary);">
+                    <i class="fas fa-search" style="font-size: 2rem; opacity: 0.5; margin-bottom: 10px;"></i>
+                    <p>Buku tidak ditemukan.</p>
+                </div>`;
             return;
         }
 
@@ -136,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = 'book-card';
             const imgSrc = book.img || book.image || book.cover;
             
-            // Logika Rating
+            // --- LOGIKA RATING DISPLAY ---
             const myRating = userRatings[book.title];
             const currentScore = myRating ? myRating.score : (book.rating || 0);
             
@@ -148,9 +165,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 starsHTML += `<i class="fas fa-star ${fillClass}"></i>`;
             }
 
-            // Logika Tombol Simpan
-            // Cek apakah ID buku ini ada di daftar simpan
-            const isSaved = savedBooks.includes(book.id.toString());
+            // --- LOGIKA TOMBOL SIMPAN ---
+            // Cek apakah buku ini ada di savedBooks (berdasarkan ID)
+            const isSaved = savedBooks.some(b => b.id.toString() === book.id.toString());
             const saveIconClass = isSaved ? 'fas' : 'far'; // Solid vs Outline
             const activeClass = isSaved ? 'active' : '';
 
@@ -173,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Klik Kartu -> Buka Modal (Kecuali klik tombol save)
             card.addEventListener('click', (e) => {
-                // Cegah modal muncul jika yang diklik adalah tombol save atau iconnya
                 if (e.target.closest('.btn-save-book')) return;
                 openModal(book);
             });
@@ -181,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bookGrid.appendChild(card);
         });
 
-        // --- EVENT LISTENER UNTUK TOMBOL SIMPAN ---
+        // --- EVENT LISTENER TOMBOL SIMPAN ---
         document.querySelectorAll('.btn-save-book').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.stopPropagation(); // Stop agar modal tidak terbuka
@@ -192,21 +208,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const bookId = this.dataset.id;
-                const icon = this.querySelector('i');
+                // Cari buku lengkap berdasarkan ID dari allBooks
+                const bookToSave = allBooks.find(b => b.id.toString() === bookId.toString());
 
-                // Cek status simpan
-                if (savedBooks.includes(bookId)) {
-                    // Hapus dari simpanan (Unsave)
-                    savedBooks = savedBooks.filter(id => id !== bookId);
+                if (!bookToSave) return; // Safety check
+
+                // Cek status simpan di array
+                const index = savedBooks.findIndex(b => b.id.toString() === bookToSave.id.toString());
+
+                if (index !== -1) {
+                    // Hapus (Unsave)
+                    savedBooks.splice(index, 1);
                     this.classList.remove('active');
-                    icon.classList.remove('fas');
-                    icon.classList.add('far');
+                    this.querySelector('i').classList.replace('fas', 'far');
                 } else {
-                    // Tambah ke simpanan (Save)
-                    savedBooks.push(bookId);
+                    // Simpan (Save) - PENTING: Simpan Objek Lengkap!
+                    savedBooks.push(bookToSave);
                     this.classList.add('active');
-                    icon.classList.remove('far');
-                    icon.classList.add('fas');
+                    this.querySelector('i').classList.replace('far', 'fas');
                 }
 
                 // Update LocalStorage
@@ -215,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 4. MODAL & LOGIKA RATING ---
+    // --- 4. MODAL & LOGIKA RATING INTERAKTIF ---
     const modal = document.getElementById('bookModal');
     const feedback = document.getElementById('ratingFeedback');
 
@@ -227,6 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modalAuthor').innerText = book.author;
         document.getElementById('modalBadges').innerHTML = `<span class="badge-cat">${book.category}</span>`;
         
+        // Setup Tombol Baca
         const readBtn = document.getElementById('readBtn');
         const newReadBtn = readBtn.cloneNode(true);
         readBtn.parentNode.replaceChild(newReadBtn, readBtn);
@@ -235,21 +255,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const pdfLink = book.file || book.pdf || book.source;
             if (pdfLink) {
                 if (currentUser) {
-                    window.location.href = `read.html?title=${encodeURIComponent(book.title)}&source=${encodeURIComponent(pdfLink)}`;
+                    const safeTitle = encodeURIComponent(book.title);
+                    const safeSource = encodeURIComponent(pdfLink);
+                    window.location.href = `read.html?title=${safeTitle}&source=${safeSource}`;
                 } else {
                     if(confirm("Silakan login dulu.")) window.location.href = 'login.html';
                 }
             } else { alert("File tidak tersedia."); }
         };
 
-        // Logika Rating Modal
+        // --- SETUP RATING DI MODAL ---
         const modalStars = document.querySelectorAll('#modalStars i');
         const myRating = userRatings[book.title];
         const currentVal = myRating ? myRating.score : 0;
 
+        // Reset Tampilan Bintang Modal
         updateModalStars(currentVal);
         feedback.innerText = myRating ? "Kamu sudah memberi rating ini." : "Sentuh bintang untuk menilai.";
 
+        // Tambah Listener
         modalStars.forEach(star => {
             star.onclick = function() {
                 if (!currentUser) {
@@ -257,10 +281,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 const val = parseInt(this.getAttribute('data-val'));
+                
+                // Simpan Rating
                 userRatings[book.title] = { score: val, date: new Date().toISOString() };
                 localStorage.setItem('userRatings', JSON.stringify(userRatings));
+                
                 updateModalStars(val);
                 feedback.innerText = "Terima kasih! Rating tersimpan.";
+                
+                // Refresh Grid di belakang layar agar bintang di kartu update
                 renderBooks(searchInput.value, categoryFilter.value);
             }
         });
@@ -282,6 +311,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 5. INITIALIZE ---
     renderBooks();
     
-    if(searchInput) searchInput.addEventListener('input', (e) => renderBooks(e.target.value, categoryFilter.value));
-    if(categoryFilter) categoryFilter.addEventListener('change', (e) => renderBooks(searchInput.value, e.target.value));
+    if(searchInput) {
+        searchInput.addEventListener('input', (e) => renderBooks(e.target.value, categoryFilter.value));
+    }
+    if(categoryFilter) {
+        categoryFilter.addEventListener('change', (e) => renderBooks(searchInput.value, e.target.value));
+    }
 });
