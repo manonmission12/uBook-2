@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Buku</title>
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="upload.css">
+</head>
+<body>
+    <div class="upload-container" style="max-width: 600px; margin: 50px auto; padding: 30px; background: var(--bg-card); border-radius: 15px;">
+        <h2>Upload Buku Baru</h2>
+        <form id="uploadForm">
+            <div style="margin-bottom: 15px;">
+                <label>Judul Buku</label>
+                <input type="text" id="bookTitle" style="width: 100%; padding: 10px;" required>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label>Penulis</label>
+                <input type="text" id="bookAuthor" style="width: 100%; padding: 10px;" required>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label>Kategori</label>
+                <select id="bookCategory" style="width: 100%; padding: 10px;">
+                    <option>Bisnis</option><option>Fiksi</option><option>Filsafat</option><option>Self-Improvement</option>
+                </select>
+            </div>
+            <button type="submit" style="padding: 10px 20px; background: var(--text-primary); color: var(--bg-card); border: none; border-radius: 5px; cursor: pointer;">Upload</button>
+            
+            <a href="index.html" style="margin-left: 10px; color: var(--text-secondary);">Batal</a>
+        </form>
+    </div>
+    <script src="upload-script.js"></script>
+</body>
+</html>

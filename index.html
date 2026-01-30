@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Era Baru Membaca - Beranda</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fas fa-book-reader"></i>
+            <span>EraBaru<span class="highlight">Membaca</span></span>
+        </div>
+        <div class="nav-links" id="navLinks"></div>
+        <div class="nav-actions">
+            <button id="themeToggle" class="icon-btn"><i class="fas fa-moon"></i></button>
+            <div id="authButtons" style="display: flex; gap: 10px; align-items: center;"></div>
+        </div>
+    </nav>
+
+    <div class="dashboard-content">
+        <header class="header-section">
+            <h1 class="page-title">Jelajahi Ilmu Pengetahuan</h1>
+            <p class="page-subtitle">Koleksi buku terbaik untuk masa depanmu</p>
+        </header>
+
+        <div class="dashboard-toolbar">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Cari judul buku...">
+            </div>
+            <div class="sort-box">
+                <i class="fas fa-filter"></i>
+                <select id="categoryFilter">
+                    <option value="all">Semua Kategori</option>
+                    <option value="Bisnis">Bisnis</option>
+                    <option value="Filsafat">Filsafat</option>
+                    <option value="Self-Improvement">Self-Improvement</option>
+                    <option value="Fiksi">Fiksi</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="bookGrid" class="book-grid"></div>
+    </div>
+
+    <div class="modal-overlay" id="bookModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div class="modal-body">
+                <div class="modal-img-wrapper"><img id="modalImg" src="" alt="Cover"></div>
+                <div class="modal-info">
+                    <div id="modalBadges"></div>
+                    <h2 id="modalTitle">Judul</h2>
+                    <p id="modalAuthor" class="modal-author">Penulis</p>
+                    <div class="interaction-area">
+                        <button id="readBtn" class="btn-primary" style="width:100%"><i class="fas fa-book-open"></i> Baca Sekarang</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard-script.js"></script>
+</body>
+</html>
