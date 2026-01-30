@@ -18,14 +18,10 @@
             <i class="fas fa-book-reader"></i>
             <span>EraBaru<span class="highlight">Membaca</span></span>
         </div>
-        
         <div class="nav-links" id="navLinks"></div>
-
         <div class="nav-actions">
-            <button id="themeToggle" class="icon-btn" title="Ganti Tema">
-                <i class="fas fa-moon"></i>
-            </button>
-            <div id="authButtons" style="display: flex; gap: 10px; align-items: center;"></div>
+            <button id="themeToggle" class="icon-btn" title="Ganti Tema"><i class="fas fa-moon"></i></button>
+            <div id="authButtons" style="display: flex; gap: 20px; align-items: center;"></div>
         </div>
     </nav>
 
@@ -52,8 +48,7 @@
             </div>
         </div>
 
-        <div id="bookGrid" class="book-grid">
-            </div>
+        <div id="bookGrid" class="book-grid"></div>
     </div>
 
     <div class="modal-overlay" id="bookModal">
@@ -67,9 +62,8 @@
                     <div class="modal-badges" id="modalBadges"></div>
                     <h2 id="modalTitle">Judul Buku</h2>
                     <p class="modal-author" id="modalAuthor">Penulis</p>
-                    
                     <p id="modalDesc" style="line-height: 1.6; color: var(--text-secondary); margin-bottom: 20px;">
-                        Sinopsis buku belum tersedia.
+                        Deskripsi buku belum tersedia.
                     </p>
 
                     <div class="interaction-area">
@@ -77,6 +71,19 @@
                             <i class="fas fa-book-open"></i> Baca Sekarang
                         </button>
                     </div>
+
+                    <div class="modal-rating-box">
+                        <p class="rating-label">Beri Rating Buku Ini:</p>
+                        <div class="modal-stars" id="modalStars">
+                            <i class="fas fa-star" data-val="1"></i>
+                            <i class="fas fa-star" data-val="2"></i>
+                            <i class="fas fa-star" data-val="3"></i>
+                            <i class="fas fa-star" data-val="4"></i>
+                            <i class="fas fa-star" data-val="5"></i>
+                        </div>
+                        <p id="ratingFeedback" class="rating-feedback"></p>
+                    </div>
+
                 </div>
             </div>
         </div>

@@ -1,119 +1,160 @@
-/* --- PROFILE CSS KHUSUS --- */
-/* Catatan: Kode Navbar sudah dipindah ke global.css */
+/* --- PROFILE STYLING LENGKAP --- */
 
-/* 1. VARIABLES (Sesuai Global) */
-:root {
-    --bg-stat: #f8f9fa;
-    --tab-text: #666666;
-    --tab-active-text: #111111;
-    --tab-active-border: #111111;
-}
-[data-theme="dark"] {
-    --bg-stat: #2d2d2d;
-    --tab-text: #888888;
-    --tab-active-text: #ffffff;
-    --tab-active-border: #ffffff;
+/* 1. CONTAINER UTAMA */
+.profile-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr 2fr; /* Kiri: Kartu Profil, Kanan: Daftar Buku */
+    gap: 30px;
 }
 
-/* 2. PROFILE CONTENT */
-.profile-content { 
-    width: 100%; max-width: 1000px; 
-    margin: 0 auto; padding: 3rem 5%; 
-    box-sizing: border-box;
-}
-
-.profile-header { display: flex; justify-content: center; margin-bottom: 3rem; width: 100%; }
-
+/* 2. KARTU PROFIL (KIRI) */
 .profile-card {
-    background: var(--bg-card); width: 100%; max-width: 500px;
-    padding: 40px; border-radius: 20px;
-    border: 1px solid var(--border); text-align: center; 
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
     box-shadow: var(--shadow);
-    display: flex; flex-direction: column; align-items: center;
-    box-sizing: border-box;
+    height: fit-content;
+    position: sticky;
+    top: 100px; /* Agar kartu tetap terlihat saat scroll */
 }
 
-.profile-pic-wrapper { position: relative; margin-bottom: 20px; width: 100px; height: 100px; }
-.profile-pic-wrapper img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
-.edit-pic-btn { position: absolute; bottom: 0; right: 0; background: var(--text-primary); color: var(--bg-card); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
-.profile-card h1 { font-size: 1.5rem; margin-bottom: 5px; color: var(--text-primary); }
-.profile-email { color: var(--text-secondary); margin-bottom: 10px; font-size: 0.95rem; }
-.profile-bio { font-style: italic; color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem; }
-
-/* ACTIONS */
-.profile-actions-main { display: flex; gap: 10px; justify-content: center; margin-bottom: 25px; flex-wrap: wrap; }
-.btn-outline, .btn-outline-danger {
-    background: transparent; border: 1px solid var(--border); color: var(--text-primary);
-    padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem;
-    display: flex; align-items: center; gap: 8px; transition: 0.2s;
+/* --- BAGIAN AVATAR & EDIT FOTO (BARU) --- */
+.avatar-wrapper {
+    position: relative;
+    width: 100px;
+    margin: 0 auto 15px;
 }
-.btn-outline:hover { background: var(--border); }
-.btn-outline-danger:hover { background: #e74c3c; color: white; border-color: #e74c3c; }
 
-.profile-stats { display: flex; gap: 40px; justify-content: center; width: 100%; }
-.stat-box { display: flex; flex-direction: column; align-items: center; }
-.stat-num { font-size: 1.4rem; font-weight: 800; color: var(--text-primary); }
-.stat-label { font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+.avatar-large {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    font-size: 3rem;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    border: 3px solid var(--border);
+}
 
-/* 3. TOOLBAR & TABS */
-.profile-toolbar { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; justify-content: space-between; width: 100%; }
-.search-box-profile, .sort-box-profile {
+.avatar-large img {
+    width: 100%; height: 100%; object-fit: cover;
+}
+
+/* Tombol Kamera Kecil */
+.btn-edit-photo {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 32px; height: 32px;
+    background: #3b82f6; /* Warna Biru */
+    color: white;
+    border: 2px solid var(--bg-card);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+    transition: 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.btn-edit-photo:hover {
+    transform: scale(1.1);
+    background: #2563eb;
+}
+/* ------------------------------------- */
+
+.profile-header h1 {
+    font-size: 1.5rem; margin-bottom: 5px; color: var(--text-primary); font-weight: 700;
+}
+.user-role { color: #3b82f6; font-weight: 600; font-size: 0.9rem; margin-bottom: 5px; }
+.join-date { color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 25px; }
+
+/* 3. STATISTIK */
+.profile-stats {
+    display: flex; justify-content: space-around;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 0; margin-bottom: 25px;
+}
+.stat-item h3 { font-size: 1.5rem; margin: 0; color: var(--text-primary); }
+.stat-item span { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 600; }
+
+/* 4. TOMBOL KELUAR */
+.btn-logout {
+    width: 100%;
+    padding: 12px;
+    background: #fee2e2; color: #ef4444;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    font-weight: 600; cursor: pointer; transition: 0.3s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-size: 0.95rem;
+}
+.btn-logout:hover { background: #ef4444; color: white; border-color: #ef4444; }
+
+/* 5. BAGIAN KANAN (DAFTAR BUKU UPLOAD) */
+.user-uploads-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: var(--shadow);
+    min-height: 400px;
+}
+.user-uploads-section h2 {
+    font-size: 1.2rem; margin-bottom: 20px; color: var(--text-primary);
     display: flex; align-items: center; gap: 10px;
-    background: var(--bg-card); border: 1px solid var(--border);
-    padding: 10px 15px; border-radius: 8px; flex: 1; min-width: 200px;
-    box-sizing: border-box;
+    border-bottom: 1px solid var(--border); padding-bottom: 15px;
 }
-.search-box-profile input, .sort-box-profile select { border: none; background: transparent; width: 100%; outline: none; color: var(--text-primary); font-size: 0.9rem; }
-.sort-box-profile select option { background: var(--bg-card); color: var(--text-primary); }
 
-.profile-tabs { display: flex; justify-content: center; gap: 30px; margin-bottom: 40px; border-bottom: 1px solid var(--border); width: 100%; }
-.tab-btn { background: transparent; border: none; padding: 15px 20px; font-size: 1rem; font-weight: 600; color: var(--tab-text); cursor: pointer; border-bottom: 2px solid transparent; }
-.tab-btn.active { color: var(--tab-active-text); border-bottom-color: var(--tab-active-border); }
-
-/* 4. GRID */
-.tab-content { display: none; width: 100%; }
-.tab-content.active { display: block; animation: fadeIn 0.4s ease; }
-.book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; width: 100%; }
-
-.book-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; position: relative; }
-.book-card img { width: 100%; height: 260px; object-fit: cover; border-bottom: 1px solid var(--border); }
-.book-info { padding: 15px; text-align: left; }
-
-.card-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 8px; opacity: 0; transform: translateY(-5px); transition: 0.2s; z-index: 10; }
-.book-card:hover .card-actions { opacity: 1; transform: translateY(0); }
-.action-btn { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); background: rgba(255,255,255,0.9); cursor: pointer; font-size: 0.85rem; transition: 0.2s; }
-[data-theme="dark"] .action-btn { background: rgba(30,30,30,0.9); }
-.btn-edit:hover { background: var(--text-primary); color: var(--bg-card); }
-.btn-delete { color: #e74c3c; }
-.btn-delete:hover { background: #e74c3c; color: white; border-color: #e74c3c; }
-.empty-state { grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-secondary); }
-
-/* 5. MODAL EDIT */
-.modal-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
-    display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px;
-    box-sizing: border-box;
+.book-grid-mini {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
 }
-.modal-overlay.active { display: flex; animation: fadeUp 0.3s ease; }
-.modal-content {
-    background: var(--bg-card); width: 100%; max-width: 450px;
-    border-radius: 16px; border: 1px solid var(--border); padding: 30px; position: relative;
-    box-shadow: var(--shadow); box-sizing: border-box;
+
+.mini-book-card {
+    background: var(--bg-input);
+    border-radius: 8px; overflow: hidden;
+    border: 1px solid var(--border);
+    transition: 0.2s; cursor: default;
+    position: relative;
 }
-.modal-header-simple { text-align: center; margin-bottom: 25px; }
-.form-group { margin-bottom: 15px; }
-.form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: var(--text-secondary); }
-.form-group input { width: 100%; padding: 12px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); box-sizing: border-box; outline: none; }
-.btn-primary { background: var(--btn-bg); color: var(--btn-text); padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; border: none; width: 100%; margin-top: 10px; }
-.close-btn { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer; }
+.mini-book-card:hover { transform: translateY(-3px); border-color: var(--text-primary); }
 
-@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.mini-book-card img {
+    width: 100%; height: 180px; object-fit: cover;
+    border-bottom: 1px solid var(--border);
+}
+.mini-info { padding: 12px; }
+.mini-info h4 { 
+    font-size: 0.9rem; margin: 0; color: var(--text-primary); 
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+}
+.mini-info p { font-size: 0.75rem; color: var(--text-secondary); margin: 5px 0 0; }
 
-/* Responsive */
+.empty-msg { 
+    color: var(--text-tertiary); font-style: italic; text-align: center; 
+    margin-top: 40px; grid-column: 1 / -1; 
+}
+
+/* Tombol Tambah Buku */
+.btn-add-book {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px; margin-top: 20px;
+    background: var(--text-primary); color: var(--bg-card);
+    border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+    transition: 0.3s;
+}
+.btn-add-book:hover { opacity: 0.9; transform: translateY(-2px); }
+
+/* 6. RESPONSIF (MOBILE) */
 @media (max-width: 768px) {
-    .profile-card { padding: 25px 15px; border: none; box-shadow: none; }
-    .book-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+    .profile-container { grid-template-columns: 1fr; gap: 20px; }
+    .profile-card { position: static; } /* Hilangkan sticky di mobile */
+    .user-uploads-section { padding: 20px; }
+    .book-grid-mini { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
 }

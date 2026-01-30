@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 0. DARK MODE ---
+    // --- 0. DARK MODE SETUP ---
     const themeToggle = document.getElementById('themeToggle');
     const root = document.documentElement;
     const icon = themeToggle ? themeToggle.querySelector('i') : null;
@@ -19,89 +19,115 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 1. AUTH CHECK & NAVBAR ---
+    // --- 1. NAVIGASI, AVATAR & DROPDOWN ---
     const currentUser = localStorage.getItem('currentUser'); 
     const navLinks = document.getElementById('navLinks');
     const authButtons = document.getElementById('authButtons');
 
     if (currentUser) {
-        // Jika Login
+        // --- JIKA MEMBER ---
         if(navLinks) {
             navLinks.innerHTML = `
                 <a href="index.html" class="nav-link active">Beranda</a>
                 <a href="upload.html" class="nav-link">Upload Buku</a>
-                <a href="profile.html" class="nav-link">Koleksiku</a>
             `;
         }
+        
+        const savedAvatar = localStorage.getItem(`avatar_${currentUser}`);
+        const avatarSrc = savedAvatar || null;
+
         if(authButtons) {
             authButtons.innerHTML = `
-                <button onclick="window.location.href='profile.html'" class="icon-btn" title="Profil">
-                    <i class="fas fa-user"></i>
-                </button>
-                <button id="logoutBtn" class="icon-btn" style="color: #ef4444;" title="Keluar">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
+                <div class="nav-profile-wrapper">
+                    <button id="profileMenuBtn" class="nav-avatar-btn">
+                        ${avatarSrc 
+                            ? `<img src="${avatarSrc}" alt="Avatar">` 
+                            : `<i class="fas fa-user"></i>`}
+                    </button>
+                    
+                    <div id="profileDropdown" class="profile-dropdown">
+                        <div class="dropdown-header">
+                            <p>Halo,</p>
+                            <strong>${currentUser}</strong>
+                        </div>
+                        <a href="upload.html" class="dropdown-item">
+                            <i class="fas fa-cloud-upload-alt"></i> Upload Buku
+                        </a>
+                        <a href="profile.html" class="dropdown-item">
+                            <i class="fas fa-id-card"></i> Profil Saya
+                        </a>
+                        <button id="logoutBtn" class="dropdown-item danger">
+                            <i class="fas fa-sign-out-alt"></i> Keluar
+                        </button>
+                    </div>
+                </div>
             `;
+
+            const menuBtn = document.getElementById('profileMenuBtn');
+            const dropdown = document.getElementById('profileDropdown');
+            
+            menuBtn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('active'); });
+            document.addEventListener('click', (e) => { if (!menuBtn.contains(e.target)) dropdown.classList.remove('active'); });
             document.getElementById('logoutBtn').addEventListener('click', () => {
-                if(confirm('Yakin ingin keluar?')) {
-                    localStorage.removeItem('currentUser');
-                    window.location.reload(); 
-                }
+                if(confirm('Yakin ingin keluar?')) { localStorage.removeItem('currentUser'); window.location.reload(); }
             });
         }
     } else {
-        // Jika Tamu
-        if(navLinks) {
-            navLinks.innerHTML = `<a href="index.html" class="nav-link active">Beranda</a>`;
-        }
+        // --- JIKA TAMU ---
+        if(navLinks) navLinks.innerHTML = `<a href="index.html" class="nav-link active">Beranda</a>`;
         if(authButtons) {
             authButtons.innerHTML = `
-                <a href="login.html" class="nav-btn" style="text-decoration:none; color:var(--text-primary); font-weight:600; margin-right:15px;">Masuk</a>
+                <a href="login.html" class="nav-btn" style="text-decoration:none; color:var(--text-primary); margin-right:15px; font-weight:600;">Masuk</a>
                 <a href="signup.html" class="nav-btn" style="background:var(--text-primary); color:var(--bg-card); padding:8px 20px; border-radius:20px; text-decoration:none; font-weight:600;">Daftar</a>
             `;
         }
     }
 
-    // --- 2. DATA BUKU (16 Buku Default) ---
+    // --- 2. DATA BUKU ---
     const defaultBooks = [
-        { id: "B1", title: "Filosofi Teras", author: "Henry Manampiring", category: "Filsafat", img: "covers/filosofi teras.png", pdf: "books/1. Filosofi Teras.pdf" },
-        { id: "B2", title: "This is Marketing", author: "Seth Godin", category: "Bisnis", img: "covers/this is marketing.png", pdf: "books/2. This is marketing.pdf" },
-        { id: "B3", title: "Atomic Habits", author: "James Clear", category: "Self-Improvement", img: "covers/atomic habits.png", pdf: "books/3. Atomic Habits.pdf" },
-        { id: "B4", title: "Psychology of Money", author: "Morgan Housel", category: "Self-Improvement", img: "covers/the psychology of money.png", pdf: "books/4. The Psychology of Money.pdf" },
-        { id: "B5", title: "Citizen 4.0", author: "Hermawan Kartajaya", category: "Bisnis", img: "covers/citizen 4.0.png", pdf: "books/5. Citizen 4.0.pdf" },
-        { id: "B6", title: "Find Your Why", author: "Simon Sinek", category: "Self-Improvement", img: "covers/find your why.png", pdf: "books/6. Find your why.pdf" },
-        { id: "B7", title: "How To Win Friends", author: "Dale Carnegie", category: "Self-Improvement", img: "covers/how to win friends&influence people.png", pdf: "books/7. How to win friend & influence people.pdf" },
-        { id: "B8", title: "Marketing 4.0", author: "Philip Kotler", category: "Bisnis", img: "covers/marketing 4.0.png", pdf: "books/8. Marketing 4.0.pdf" },
-        { id: "B9", title: "Marketing in Crisis", author: "Rhenald Kasal", category: "Bisnis", img: "covers/marketing in crisis.png", pdf: "books/9. Marketing in Crisis.pdf" },
-        { id: "B10", title: "Mindset", author: "Dr. Carol S. Dweck", category: "Self-Improvement", img: "covers/mindset.png", pdf: "books/10. Mindset.pdf" },
-        { id: "B11", title: "Bodo Amat", author: "Mark Manson", category: "Self-Improvement", img: "covers/sebuah seni untuk bersikap bodo amat.png", pdf: "books/11. Sebuah Seni untuk Bersikap Bodo Amat.pdf" },
-        { id: "B12", title: "Thinking, Fast & Slow", author: "Daniel Kahneman", category: "Self-Improvement", img: "covers/thinking fast and slow.png", pdf: "books/12. Thinking, fast and slow.pdf" },
-        { id: "B13", title: "Grit", author: "Angela Duckworth", category: "Self-Improvement", img: "covers/grit.png", pdf: "books/grit.pdf" },
-        { id: "B14", title: "Show Your Work", author: "Austin Kleon", category: "Self-Improvement", img: "covers/Show Your Work.png", pdf: "books/14. Show your work.pdf" },
-        { id: "B15", title: "Intelligent Investor", author: "Benjamin Graham", category: "Bisnis", img: "covers/the intelligent investor.png", pdf: "books/15. The Intelligent Investor.pdf" },
-        { id: "B16", title: "Think Like a Freak", author: "Steven D. Levitt", category: "Self-Improvement", img: "covers/think like a freak.png", pdf: "books/16. Think like a freak.pdf" }
+        { id: "B1", title: "Filosofi Teras", author: "Henry Manampiring", category: "Filsafat", img: "covers/filosofi teras.png", pdf: "books/1. Filosofi Teras.pdf", rating: 4.8 },
+        { id: "B2", title: "This is Marketing", author: "Seth Godin", category: "Bisnis", img: "covers/this is marketing.png", pdf: "books/2. This is marketing.pdf", rating: 4.6 },
+        { id: "B3", title: "Atomic Habits", author: "James Clear", category: "Self-Improvement", img: "covers/atomic habits.png", pdf: "books/3. Atomic Habits.pdf", rating: 4.9 },
+        { id: "B4", title: "Psychology of Money", author: "Morgan Housel", category: "Self-Improvement", img: "covers/the psychology of money.png", pdf: "books/4. The Psychology of Money.pdf", rating: 4.7 },
+        { id: "B5", title: "Citizen 4.0", author: "Hermawan Kartajaya", category: "Bisnis", img: "covers/citizen 4.0.png", pdf: "books/5. Citizen 4.0.pdf", rating: 4.5 },
+        { id: "B6", title: "Find Your Why", author: "Simon Sinek", category: "Self-Improvement", img: "covers/find your why.png", pdf: "books/6. Find your why.pdf", rating: 4.4 },
+        { id: "B7", title: "How To Win Friends", author: "Dale Carnegie", category: "Self-Improvement", img: "covers/how to win friends&influence people.png", pdf: "books/7. How to win friend & influence people.pdf", rating: 4.8 },
+        { id: "B8", title: "Marketing 4.0", author: "Philip Kotler", category: "Bisnis", img: "covers/marketing 4.0.png", pdf: "books/8. Marketing 4.0.pdf", rating: 4.7 },
+        { id: "B9", title: "Marketing in Crisis", author: "Rhenald Kasal", category: "Bisnis", img: "covers/marketing in crisis.png", pdf: "books/9. Marketing in Crisis.pdf", rating: 4.5 },
+        { id: "B10", title: "Mindset", author: "Dr. Carol S. Dweck", category: "Self-Improvement", img: "covers/mindset.png", pdf: "books/10. Mindset.pdf", rating: 4.3 },
+        { id: "B11", title: "Bodo Amat", author: "Mark Manson", category: "Self-Improvement", img: "covers/sebuah seni untuk bersikap bodo amat.png", pdf: "books/11. Sebuah Seni untuk Bersikap Bodo Amat.pdf", rating: 4.6 },
+        { id: "B12", title: "Thinking, Fast & Slow", author: "Daniel Kahneman", category: "Self-Improvement", img: "covers/thinking fast and slow.png", pdf: "books/12. Thinking, fast and slow.pdf", rating: 4.7 },
+        { id: "B13", title: "Grit", author: "Angela Duckworth", category: "Self-Improvement", img: "covers/grit.png", pdf: "books/grit.pdf", rating: 4.5 },
+        { id: "B14", title: "Show Your Work", author: "Austin Kleon", category: "Self-Improvement", img: "covers/Show Your Work.png", pdf: "books/14. Show your work.pdf", rating: 4.8 },
+        { id: "B15", title: "Intelligent Investor", author: "Benjamin Graham", category: "Bisnis", img: "covers/the intelligent investor.png", pdf: "books/15. The Intelligent Investor.pdf", rating: 4.6 },
+        { id: "B16", title: "Think Like a Freak", author: "Steven D. Levitt", category: "Self-Improvement", img: "covers/think like a freak.png", pdf: "books/16. Think like a freak.pdf", rating: 4.9 }
     ];
 
     let uploadedBooks = JSON.parse(localStorage.getItem('myUploadedBooks') || '[]');
     let allBooks = [...uploadedBooks.reverse(), ...defaultBooks]; 
 
-    // --- 3. RENDER BUKU ---
+    // --- 3. RENDER BUKU + TOMBOL SAVE ---
     const bookGrid = document.getElementById('bookGrid');
     const searchInput = document.getElementById('searchInput');
     const categoryFilter = document.getElementById('categoryFilter');
+
+    // Ambil Data Rating & Simpan
+    const userRatings = JSON.parse(localStorage.getItem('userRatings') || '{}');
+    let savedBooks = JSON.parse(localStorage.getItem(`savedBooks_${currentUser}`) || '[]');
 
     function renderBooks(filterText = '', category = 'all') {
         if (!bookGrid) return;
         bookGrid.innerHTML = '';
 
         const filtered = allBooks.filter(b => {
-            const matchText = b.title.toLowerCase().includes(filterText.toLowerCase()) || b.author.toLowerCase().includes(filterText.toLowerCase());
+            const matchText = b.title.toLowerCase().includes(filterText.toLowerCase()) || 
+                              b.author.toLowerCase().includes(filterText.toLowerCase());
             const matchCat = category === 'all' || b.category === category;
             return matchText && matchCat;
         });
 
         if (filtered.length === 0) {
-            bookGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--text-tertiary); margin-top:40px;"><p>Buku tidak ditemukan.</p></div>`;
+            bookGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; margin-top:40px; color:var(--text-tertiary);"><p>Buku tidak ditemukan.</p></div>`;
             return;
         }
 
@@ -110,21 +136,88 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = 'book-card';
             const imgSrc = book.img || book.image || book.cover;
             
+            // Logika Rating
+            const myRating = userRatings[book.title];
+            const currentScore = myRating ? myRating.score : (book.rating || 0);
+            
+            let starsHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                let fillClass = '';
+                if (myRating) fillClass = (i <= currentScore) ? 'user-filled' : '';
+                else fillClass = (i <= currentScore) ? 'filled' : '';
+                starsHTML += `<i class="fas fa-star ${fillClass}"></i>`;
+            }
+
+            // Logika Tombol Simpan
+            // Cek apakah ID buku ini ada di daftar simpan
+            const isSaved = savedBooks.includes(book.id.toString());
+            const saveIconClass = isSaved ? 'fas' : 'far'; // Solid vs Outline
+            const activeClass = isSaved ? 'active' : '';
+
             card.innerHTML = `
+                <button class="btn-save-book ${activeClass}" data-id="${book.id}">
+                    <i class="${saveIconClass} fa-bookmark"></i>
+                </button>
+
                 <img src="${imgSrc}" alt="${book.title}" onerror="this.src='https://via.placeholder.com/300x450?text=Cover'">
                 <div class="book-info">
                     <span class="tag">${book.category}</span>
                     <h3>${book.title}</h3>
                     <p>${book.author}</p>
+                    <div class="card-footer">
+                        <div class="interactive-stars">${starsHTML}</div>
+                        <span class="rating-number">${currentScore || 4.5}</span>
+                    </div>
                 </div>
             `;
-            card.addEventListener('click', () => openModal(book));
+            
+            // Klik Kartu -> Buka Modal (Kecuali klik tombol save)
+            card.addEventListener('click', (e) => {
+                // Cegah modal muncul jika yang diklik adalah tombol save atau iconnya
+                if (e.target.closest('.btn-save-book')) return;
+                openModal(book);
+            });
+            
             bookGrid.appendChild(card);
+        });
+
+        // --- EVENT LISTENER UNTUK TOMBOL SIMPAN ---
+        document.querySelectorAll('.btn-save-book').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation(); // Stop agar modal tidak terbuka
+                
+                if (!currentUser) {
+                    if(confirm("Login dulu yuk untuk menyimpan buku!")) window.location.href = 'login.html';
+                    return;
+                }
+
+                const bookId = this.dataset.id;
+                const icon = this.querySelector('i');
+
+                // Cek status simpan
+                if (savedBooks.includes(bookId)) {
+                    // Hapus dari simpanan (Unsave)
+                    savedBooks = savedBooks.filter(id => id !== bookId);
+                    this.classList.remove('active');
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                } else {
+                    // Tambah ke simpanan (Save)
+                    savedBooks.push(bookId);
+                    this.classList.add('active');
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                }
+
+                // Update LocalStorage
+                localStorage.setItem(`savedBooks_${currentUser}`, JSON.stringify(savedBooks));
+            });
         });
     }
 
-    // --- 4. MODAL & PROTEKSI BACA ---
+    // --- 4. MODAL & LOGIKA RATING ---
     const modal = document.getElementById('bookModal');
+    const feedback = document.getElementById('ratingFeedback');
 
     function openModal(book) {
         if (!modal) return;
@@ -142,29 +235,53 @@ document.addEventListener('DOMContentLoaded', () => {
             const pdfLink = book.file || book.pdf || book.source;
             if (pdfLink) {
                 if (currentUser) {
-                    // JIKA LOGIN: Encode URL & Buka
-                    const safeTitle = encodeURIComponent(book.title);
-                    const safeSource = encodeURIComponent(pdfLink);
-                    window.location.href = `read.html?title=${safeTitle}&source=${safeSource}`;
+                    window.location.href = `read.html?title=${encodeURIComponent(book.title)}&source=${encodeURIComponent(pdfLink)}`;
                 } else {
-                    // JIKA TAMU: Arahkan ke Login
-                    if(confirm("Silakan login dulu untuk membaca buku ini.")) {
-                        window.location.href = 'login.html';
-                    }
+                    if(confirm("Silakan login dulu.")) window.location.href = 'login.html';
                 }
-            } else {
-                alert("File buku belum tersedia.");
-            }
+            } else { alert("File tidak tersedia."); }
         };
 
+        // Logika Rating Modal
+        const modalStars = document.querySelectorAll('#modalStars i');
+        const myRating = userRatings[book.title];
+        const currentVal = myRating ? myRating.score : 0;
+
+        updateModalStars(currentVal);
+        feedback.innerText = myRating ? "Kamu sudah memberi rating ini." : "Sentuh bintang untuk menilai.";
+
+        modalStars.forEach(star => {
+            star.onclick = function() {
+                if (!currentUser) {
+                    if(confirm("Login dulu untuk memberi rating!")) window.location.href = 'login.html';
+                    return;
+                }
+                const val = parseInt(this.getAttribute('data-val'));
+                userRatings[book.title] = { score: val, date: new Date().toISOString() };
+                localStorage.setItem('userRatings', JSON.stringify(userRatings));
+                updateModalStars(val);
+                feedback.innerText = "Terima kasih! Rating tersimpan.";
+                renderBooks(searchInput.value, categoryFilter.value);
+            }
+        });
+
         modal.classList.add('active');
+    }
+
+    function updateModalStars(val) {
+        document.querySelectorAll('#modalStars i').forEach(s => {
+            const sVal = parseInt(s.getAttribute('data-val'));
+            if (sVal <= val) s.classList.add('active');
+            else s.classList.remove('active');
+        });
     }
 
     window.closeModal = () => modal.classList.remove('active');
     if(modal) modal.addEventListener('click', (e) => { if(e.target === modal) window.closeModal(); });
 
-    // Init
+    // --- 5. INITIALIZE ---
     renderBooks();
+    
     if(searchInput) searchInput.addEventListener('input', (e) => renderBooks(e.target.value, categoryFilter.value));
     if(categoryFilter) categoryFilter.addEventListener('change', (e) => renderBooks(searchInput.value, e.target.value));
 });
