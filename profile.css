@@ -1,13 +1,14 @@
 /* --- PROFILE STYLING LENGKAP --- */
 
-/* 1. CONTAINER UTAMA */
+/* 1. CONTAINER UTAMA (LAYOUT GRID) */
 .profile-container {
-    max-width: 900px;
+    max-width: 1000px; /* Sedikit lebih lebar agar muat 2 kolom nyaman */
     margin: 40px auto;
     padding: 0 20px;
     display: grid;
-    grid-template-columns: 1fr 2fr; /* Kiri: Kartu Profil, Kanan: Daftar Buku */
+    grid-template-columns: 300px 1fr; /* Kiri Fixed 300px, Kanan sisa ruang */
     gap: 30px;
+    align-items: start; /* Supaya elemen start dari atas */
 }
 
 /* 2. KARTU PROFIL (KIRI) */
@@ -18,27 +19,29 @@
     padding: 30px;
     text-align: center;
     box-shadow: var(--shadow);
-    height: fit-content;
+    /* Membuat kartu tetap terlihat saat scroll daftar buku */
     position: sticky;
-    top: 100px; /* Agar kartu tetap terlihat saat scroll */
+    top: 100px; 
+    z-index: 10;
 }
 
-/* --- BAGIAN AVATAR & EDIT FOTO (BARU) --- */
+/* --- AVATAR & EDIT FOTO --- */
 .avatar-wrapper {
     position: relative;
-    width: 100px;
+    width: 110px;
     margin: 0 auto 15px;
 }
 
 .avatar-large {
-    width: 100px; height: 100px;
+    width: 110px; height: 110px;
     border-radius: 50%;
     background: var(--bg-input);
     color: var(--text-primary);
-    font-size: 3rem;
+    font-size: 3.5rem;
     display: flex; align-items: center; justify-content: center;
     overflow: hidden;
-    border: 3px solid var(--border);
+    border: 4px solid var(--bg-card);
+    box-shadow: 0 0 0 2px var(--border);
 }
 
 .avatar-large img {
@@ -48,15 +51,15 @@
 /* Tombol Kamera Kecil */
 .btn-edit-photo {
     position: absolute;
-    bottom: 0; right: 0;
-    width: 32px; height: 32px;
+    bottom: 5px; right: 0;
+    width: 36px; height: 36px;
     background: #3b82f6; /* Warna Biru */
     color: white;
-    border: 2px solid var(--bg-card);
+    border: 3px solid var(--bg-card);
     border-radius: 50%;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    font-size: 0.9rem;
+    font-size: 1rem;
     transition: 0.2s;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
@@ -64,15 +67,15 @@
     transform: scale(1.1);
     background: #2563eb;
 }
-/* ------------------------------------- */
+/* -------------------------- */
 
 .profile-header h1 {
-    font-size: 1.5rem; margin-bottom: 5px; color: var(--text-primary); font-weight: 700;
+    font-size: 1.4rem; margin-bottom: 5px; color: var(--text-primary); font-weight: 700;
 }
 .user-role { color: #3b82f6; font-weight: 600; font-size: 0.9rem; margin-bottom: 5px; }
 .join-date { color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 25px; }
 
-/* 3. STATISTIK */
+/* STATISTIK */
 .profile-stats {
     display: flex; justify-content: space-around;
     border-top: 1px solid var(--border);
@@ -80,9 +83,9 @@
     padding: 20px 0; margin-bottom: 25px;
 }
 .stat-item h3 { font-size: 1.5rem; margin: 0; color: var(--text-primary); }
-.stat-item span { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 600; }
+.stat-item span { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
 
-/* 4. TOMBOL KELUAR */
+/* TOMBOL KELUAR */
 .btn-logout {
     width: 100%;
     padding: 12px;
@@ -95,53 +98,72 @@
 }
 .btn-logout:hover { background: #ef4444; color: white; border-color: #ef4444; }
 
-/* 5. BAGIAN KANAN (DAFTAR BUKU UPLOAD) */
+
+/* 3. AREA KONTEN KANAN (PEMBUNGKUS) */
+.profile-content-right {
+    display: flex;
+    flex-direction: column;
+    gap: 30px; /* Jarak antar section (Favorit & Upload) */
+}
+
+/* SECTION BUKU (FAVORIT & UPLOAD) */
 .user-uploads-section {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 20px;
     padding: 30px;
     box-shadow: var(--shadow);
-    min-height: 400px;
 }
+
 .user-uploads-section h2 {
     font-size: 1.2rem; margin-bottom: 20px; color: var(--text-primary);
     display: flex; align-items: center; gap: 10px;
     border-bottom: 1px solid var(--border); padding-bottom: 15px;
 }
 
+/* GRID MINI UNTUK BUKU DI PROFIL */
 .book-grid-mini {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 15px;
+    gap: 20px;
 }
 
+/* KARTU BUKU MINI */
 .mini-book-card {
-    background: var(--bg-input);
-    border-radius: 8px; overflow: hidden;
+    background: var(--bg-card);
+    border-radius: 10px; overflow: hidden;
     border: 1px solid var(--border);
-    transition: 0.2s; cursor: default;
-    position: relative;
+    transition: 0.2s; cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
-.mini-book-card:hover { transform: translateY(-3px); border-color: var(--text-primary); }
+.mini-book-card:hover { 
+    transform: translateY(-5px); 
+    border-color: var(--text-primary); 
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
 
 .mini-book-card img {
-    width: 100%; height: 180px; object-fit: cover;
+    width: 100%; height: 190px; object-fit: cover;
     border-bottom: 1px solid var(--border);
 }
 .mini-info { padding: 12px; }
 .mini-info h4 { 
     font-size: 0.9rem; margin: 0; color: var(--text-primary); 
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+    font-weight: 600;
 }
 .mini-info p { font-size: 0.75rem; color: var(--text-secondary); margin: 5px 0 0; }
 
+/* PESAN KOSONG */
 .empty-msg { 
     color: var(--text-tertiary); font-style: italic; text-align: center; 
-    margin-top: 40px; grid-column: 1 / -1; 
+    padding: 20px;
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    grid-column: 1 / -1; 
 }
 
-/* Tombol Tambah Buku */
+/* TOMBOL TAMBAH BUKU (Jika ada) */
 .btn-add-book {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 10px 20px; margin-top: 20px;
@@ -151,10 +173,24 @@
 }
 .btn-add-book:hover { opacity: 0.9; transform: translateY(-2px); }
 
-/* 6. RESPONSIF (MOBILE) */
-@media (max-width: 768px) {
-    .profile-container { grid-template-columns: 1fr; gap: 20px; }
-    .profile-card { position: static; } /* Hilangkan sticky di mobile */
-    .user-uploads-section { padding: 20px; }
-    .book-grid-mini { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+/* 4. RESPONSIF (MOBILE) */
+@media (max-width: 850px) {
+    .profile-container { 
+        grid-template-columns: 1fr; /* Jadi 1 kolom */
+        gap: 20px; 
+    }
+    
+    .profile-card { 
+        position: static; /* Tidak sticky di mobile */
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .profile-content-right {
+        width: 100%;
+    }
+
+    .book-grid-mini { 
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); 
+    }
 }

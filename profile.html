@@ -44,16 +44,31 @@
             <div class="profile-stats">
                 <div class="stat-item">
                     <h3 id="statUploads">0</h3>
-                    <span>Buku Upload</span>
+                    <span>Upload</span>
+                </div>
+                <div class="stat-item">
+                    <h3 id="statSaved">0</h3>
+                    <span>Disimpan</span>
                 </div>
             </div>
 
             <button id="logoutBtn" class="btn-logout">Keluar Akun</button>
         </div>
 
-        <div class="user-uploads-section">
-            <h2>Buku yang Kamu Upload</h2>
-            <div id="userBookGrid" class="book-grid-mini"></div>
+        <div class="profile-content-right">
+            
+            <div class="user-uploads-section" style="margin-bottom: 30px;">
+                <h2 style="color: #ef4444;"><i class="fas fa-heart"></i> Koleksi Favorit Saya</h2>
+                <div id="savedBookGrid" class="book-grid-mini">
+                    </div>
+            </div>
+
+            <div class="user-uploads-section">
+                <h2><i class="fas fa-cloud-upload-alt"></i> Buku Upload Saya</h2>
+                <div id="userBookGrid" class="book-grid-mini">
+                    </div>
+            </div>
+
         </div>
     </div>
 

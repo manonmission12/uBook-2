@@ -3,37 +3,77 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentUser = localStorage.getItem('currentUser');
     if (!currentUser) { window.location.href = 'login.html'; return; }
 
-    // 2. Tampilkan Info Dasar
+    // 2. Info Dasar
     document.getElementById('displayName').innerText = currentUser;
     
-    // Tampilkan Avatar (jika ada)
+    // Avatar Logic
     const savedAvatar = localStorage.getItem(`avatar_${currentUser}`);
     const avatarDisplay = document.getElementById('profileAvatarDisplay');
     if (savedAvatar) {
         avatarDisplay.innerHTML = `<img src="${savedAvatar}" alt="Avatar">`;
     }
 
-    // 3. Logika Ganti Foto
+    // Ganti Foto
     const avatarInput = document.getElementById('avatarInput');
     avatarInput.addEventListener('change', function() {
         const file = this.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                const result = e.target.result; // Base64 Image string
-                // Simpan ke LocalStorage
+                const result = e.target.result;
                 try {
                     localStorage.setItem(`avatar_${currentUser}`, result);
-                    // Update Tampilan
                     avatarDisplay.innerHTML = `<img src="${result}" alt="Avatar">`;
-                    alert("Foto profil berhasil diperbarui!");
+                    alert("Foto profil diperbarui!");
                 } catch (err) {
-                    alert("Gambar terlalu besar! Coba gambar yang lebih kecil.");
+                    alert("Gambar terlalu besar! Gunakan ukuran lebih kecil.");
                 }
             }
             reader.readAsDataURL(file);
         }
     });
+
+    // 3. LOGIKA BUKU (UPLOAD & DISIMPAN)
+    
+    // A. Buku yang Diupload User
+    const uploadedBooks = JSON.parse(localStorage.getItem('myUploadedBooks') || '[]');
+    document.getElementById('statUploads').innerText = uploadedBooks.length;
+    renderList('userBookGrid', uploadedBooks, "Kamu belum mengupload buku.");
+
+    // B. Buku yang Disimpan (Favorit) - BARU
+    const savedBooks = JSON.parse(localStorage.getItem(`savedBooks_${currentUser}`) || '[]');
+    document.getElementById('statSaved').innerText = savedBooks.length;
+    renderList('savedBookGrid', savedBooks, "Belum ada buku yang disimpan.");
+
+    // Fungsi Render Universal
+    function renderList(elementId, booksArray, emptyMessage) {
+        const grid = document.getElementById(elementId);
+        grid.innerHTML = '';
+
+        if (booksArray.length > 0) {
+            booksArray.reverse().forEach(book => {
+                const card = document.createElement('div');
+                card.className = 'mini-book-card';
+                // Klik kartu di profil -> Buka halaman baca langsung
+                card.onclick = () => {
+                    const safeTitle = encodeURIComponent(book.title);
+                    const safeSource = encodeURIComponent(book.pdf || book.file || '');
+                    window.location.href = `read.html?title=${safeTitle}&source=${safeSource}`;
+                };
+
+                card.innerHTML = `
+                    <img src="${book.img || book.image || book.cover}" alt="${book.title}" onerror="this.src='https://via.placeholder.com/150'">
+                    <div class="mini-info">
+                        <h4>${book.title}</h4>
+                        <p>${book.category}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        } else {
+            grid.innerHTML = `<p class="empty-msg">${emptyMessage}</p>`;
+        }
+    }
 
     // 4. Logout
     document.getElementById('logoutBtn').addEventListener('click', () => {
@@ -43,30 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 5. Load Buku Upload User (sama seperti sebelumnya)
-    const uploadedBooks = JSON.parse(localStorage.getItem('myUploadedBooks') || '[]');
-    document.getElementById('statUploads').innerText = uploadedBooks.length;
-    
-    const grid = document.getElementById('userBookGrid');
-    if (uploadedBooks.length > 0) {
-        grid.innerHTML = '';
-        uploadedBooks.reverse().forEach(book => {
-            const card = document.createElement('div');
-            card.className = 'mini-book-card';
-            card.innerHTML = `
-                <img src="${book.img || 'https://via.placeholder.com/150'}" alt="${book.title}">
-                <div class="mini-info">
-                    <h4>${book.title}</h4>
-                    <p>${book.category}</p>
-                </div>
-            `;
-            grid.appendChild(card);
-        });
-    } else {
-        grid.innerHTML = '<p class="empty-msg">Belum ada buku.</p>';
-    }
-
-    // Theme Toggle
+    // Theme
     const themeToggle = document.getElementById('themeToggle');
     const root = document.documentElement;
     root.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
