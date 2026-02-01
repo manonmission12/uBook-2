@@ -1,88 +1,61 @@
 /* --- STYLE DASAR --- */
-body { 
-    margin: 0; 
-    background: #333; 
-    color: white; 
-    font-family: 'Inter', sans-serif; 
-    height: 100vh; 
-    display: flex; 
-    flex-direction: column; 
-    overflow: hidden; 
-}
+body { margin: 0; background: #333; color: white; font-family: 'Inter', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
 /* NAVBAR */
-.reader-nav {
-    height: 60px; background: #222; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 100;
-}
-.nav-btn, .tool-btn { 
-    background: #444; border: none; color: white; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin: 0 5px; font-size: 1rem; transition: 0.2s; 
-}
+.reader-nav { height: 60px; background: #222; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 100; }
+.nav-btn, .tool-btn { background: #444; border: none; color: white; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin: 0 5px; font-size: 1rem; transition: 0.2s; }
 .nav-btn:hover, .tool-btn:hover { background: #555; }
 .tool-btn.active { background: #10b981; color: white; box-shadow: 0 0 5px #10b981; }
 .finish-btn { background: #10b981 !important; font-weight: bold; }
-.finish-btn:hover { background: #059669 !important; }
 .nav-right { display: flex; gap: 20px; align-items: center; }
 .annotation-tools { display: flex; align-items: center; border-right: 1px solid #555; padding-right: 15px; gap: 5px; }
+.separator { width: 1px; height: 24px; background-color: #555; margin: 0 8px; }
 
-/* LAYOUT UTAMA (SPLIT) */
-.main-reader-layout { 
-    flex: 1; overflow: hidden; position: relative; background: #525659; 
-    display: flex; flex-direction: row; perspective: 1500px;
-}
+/* LAYOUT */
+.main-reader-layout { flex: 1; overflow: hidden; position: relative; background: #525659; display: flex; flex-direction: row; perspective: 1500px; }
 
 /* PDF CONTAINER */
 .pdf-container { 
-    flex: 1; overflow: auto; display: flex; justify-content: center; padding: 40px; position: relative;
+    flex: 1; 
+    overflow: auto; 
+    display: flex; 
+    justify-content: center; 
+    padding: 20px; 
+    position: relative; 
+    background: #525659;
+    /* Optimasi Scroll */
+    -webkit-overflow-scrolling: touch;
 }
 
-/* --- WRAPPER & LAYERING SYSTEM (INTI LOGIKA) --- */
 .pdf-wrapper { 
     position: relative; 
     box-shadow: 0 5px 25px rgba(0,0,0,0.5); 
     background: white; 
-    transform-style: preserve-3d;
-    transition: transform 0.4s ease-in-out, opacity 0.4s; 
-    transform-origin: center center;
-    /* Wrapper harus display block agar menampung absolute children dengan benar */
     display: block; 
+    /* Optimasi Render GPU */
+    will-change: transform;
+    transform: translateZ(0); 
 }
 
-/* Layer 1: Gambar PDF (Paling Bawah) */
-#the-canvas { 
-    display: block; 
-    position: absolute; top: 0; left: 0; 
-    z-index: 1; 
-}
+/* Layering */
+#the-canvas { display: block; position: absolute; top: 0; left: 0; z-index: 1; }
+.textLayer { position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; opacity: 1; line-height: 1.0; z-index: 2; mix-blend-mode: multiply; }
+.textLayer ::selection { background: rgba(0, 0, 255, 0.3); color: transparent; }
+.textLayer > span { color: transparent; position: absolute; white-space: pre; cursor: text; transform-origin: 0% 0%; }
+.annotation-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+#highlight-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
-/* Layer 2: Text Layer (Tengah - Untuk Seleksi Teks) */
-/* Class .textLayer ini bawaan PDF.js, kita atur posisinya */
-.textLayer {
-    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    overflow: hidden;
-    opacity: 1; /* Teks aslinya transparan, tapi containernya harus visible */
-    line-height: 1.0;
-    z-index: 2; /* Di atas gambar */
-    mix-blend-mode: multiply; /* Biar teks hitam menyatu natural */
-}
+/* SIDEBAR KIRI */
+.page-nav-sidebar { width: 230px; background: #2a2a2a; border-right: 1px solid #444; display: flex; flex-direction: column; box-shadow: 2px 0 10px rgba(0,0,0,0.3); z-index: 50; }
+.page-nav-list { flex: 1; overflow-y: auto; padding: 15px 10px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.page-nav-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.2s ease; width: 100%; }
+.page-nav-item canvas { border: 1px solid #555; box-shadow: 0 2px 5px rgba(0,0,0,0.5); transition: all 0.2s ease; background: white; max-width: 100%; height: auto; }
+.page-nav-item:hover canvas { border-color: #aaa; transform: scale(1.02); }
+.page-label { margin-top: 5px; font-size: 0.8rem; color: #888; font-weight: 500; }
+.page-nav-item.active canvas { border: 3px solid #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
+.page-nav-item.active .page-label { color: #10b981; font-weight: bold; }
 
-/* Warna blok seleksi teks (Biru Standar Browser) */
-.textLayer ::selection { 
-    background: rgba(0, 0, 255, 0.3); 
-    color: transparent;
-}
-
-/* Layer 3: Annotation Layer (Paling Atas - Untuk Stabilo) */
-.annotation-layer {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; /* DEFAULT: MATI (Tembus pandang ke Text Layer) */
-    z-index: 10; 
-}
-#highlight-canvas {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    /* Cursor diatur lewat JS */
-}
-
-/* --- SIDEBAR CATATAN --- */
+/* SIDEBAR KANAN */
 .notes-sidebar { width: 320px; background: #2a2a2a; border-left: 1px solid #444; display: flex; flex-direction: column; box-shadow: -2px 0 10px rgba(0,0,0,0.3); z-index: 50; }
 .notes-header { padding: 15px 20px; background: #333; border-bottom: 1px solid #444; display: flex; justify-content: space-between; align-items: center; }
 .notes-header h3 { margin: 0; font-size: 1rem; color: #f59e0b; display: flex; gap: 8px; align-items: center; }
@@ -90,7 +63,6 @@ body {
 .notes-list { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
 .empty-notes { text-align: center; color: #666; font-style: italic; font-size: 0.9rem; margin-top: 20px; }
 .note-item { background: #444; padding: 12px; border-radius: 8px; border-left: 4px solid #f59e0b; position: relative; animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 .note-content { font-size: 0.9rem; line-height: 1.4; color: #ddd; white-space: pre-wrap; }
 .note-date { font-size: 0.7rem; color: #888; margin-top: 8px; display: block; }
 .btn-delete-note { position: absolute; top: 8px; right: 8px; background: none; border: none; color: #666; cursor: pointer; font-size: 0.8rem; transition: 0.2s; }
@@ -102,8 +74,6 @@ body {
 .btn-add-note:hover { background: #d97706; }
 
 /* UTILS */
-.page-flip-next { transform-origin: left center; transform: rotateY(-90deg); opacity: 0.5; }
-.page-flip-prev { transform-origin: right center; transform: rotateY(90deg); opacity: 0.5; }
 .loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 200; }
 .loading-overlay.active { display: flex; }
 .loading-overlay:not(.active) { display: none; }
@@ -113,25 +83,24 @@ body {
 /* RATING */
 .rating-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 3000; }
 .rating-overlay.active { display: flex; }
-.rating-card { background: #fff; color: #333; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-@keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.rating-card { background: #fff; color: #333; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
 .rating-icon { font-size: 3rem; color: #f59e0b; margin-bottom: 15px; }
 .rating-card h2 { margin: 0 0 10px; font-size: 1.5rem; }
-.rating-card p { color: #666; margin-bottom: 20px; }
 .rating-container { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 20px; }
 .star-widget i { font-size: 2rem; color: #ddd; cursor: pointer; transition: 0.2s; display: inline-block; }
 .star-widget i:hover, .star-widget i.active { color: #f59e0b; transform: scale(1.2); }
 .rating-num-input { width: 60px; padding: 8px; border: 2px solid #ddd; border-radius: 8px; text-align: center; font-size: 1.1rem; font-weight: 700; color: #333; font-family: inherit; }
-.rating-num-input:focus { border-color: #f59e0b; outline: none; }
-#ratingReview { width: 100%; height: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 10px; resize: none; font-family: inherit; margin-bottom: 20px; box-sizing: border-box; }
 .rating-actions { display: flex; gap: 10px; justify-content: center; }
-.btn-secondary { background: #e5e7eb; color: #374151; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
-.btn-primary { background: #2563eb; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
-.btn-primary:hover { background: #1d4ed8; }
+.btn-secondary { background: #e5e7eb; color: #374151; padding: 10px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;}
+.btn-primary { background: #2563eb; color: white; padding: 10px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;}
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .main-reader-layout { flex-direction: column; }
-    .notes-sidebar { width: 100%; height: 40%; border-left: none; border-top: 1px solid #444; }
+    .page-nav-sidebar { width: 100%; height: 120px; border-right: none; border-bottom: 1px solid #444; order: -1; flex-direction: row; overflow-x: auto; overflow-y: hidden; }
+    .page-nav-list { flex-direction: row; padding: 10px; gap: 15px; align-items: center; width: auto; }
+    .page-nav-item { width: auto; min-width: 80px; }
+    .notes-sidebar { width: 100%; height: 30%; border-left: none; border-top: 1px solid #444; }
     .pdf-container { height: 60%; }
     .annotation-tools { flex-wrap: wrap; }
+    .separator { display: none; }
 }

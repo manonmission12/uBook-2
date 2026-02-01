@@ -20,15 +20,18 @@
         
         <div class="nav-center">
             <button id="prevBtn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
-            <span id="pageInfo">Hal -</span>
+            <span id="pageInfo">Hal 1</span>
             <button id="nextBtn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
             <button id="finishBtn" class="nav-btn finish-btn" style="display: none;">Selesai <i class="fas fa-check"></i></button>
         </div>
 
         <div class="nav-right">
             <div class="annotation-tools">
-                <button id="highlightBtn" class="tool-btn" title="Stabilo (Tarik Garis)"><i class="fas fa-highlighter"></i></button>
-                <button id="eraserBtn" class="tool-btn" title="Penghapus (Klik Blok)"><i class="fas fa-eraser"></i></button>
+                <button id="undoBtn" class="tool-btn" title="Undo (Ctrl+Z)"><i class="fas fa-undo"></i></button>
+                <button id="redoBtn" class="tool-btn" title="Redo (Ctrl+Y)"><i class="fas fa-redo"></i></button>
+                <div class="separator"></div>
+                <button id="highlightBtn" class="tool-btn" title="Stabilo"><i class="fas fa-highlighter"></i></button>
+                <button id="eraserBtn" class="tool-btn" title="Penghapus"><i class="fas fa-eraser"></i></button>
                 <button id="clearPageBtn" class="tool-btn" title="Bersihkan Halaman"><i class="fas fa-trash-alt"></i></button>
             </div>
             
@@ -41,12 +44,15 @@
     </nav>
 
     <div class="main-reader-layout">
+        
+        <aside class="page-nav-sidebar">
+            <div id="pageNavList" class="page-nav-list"></div>
+        </aside>
+
         <div class="pdf-container" id="pdfContainer">
             <div class="pdf-wrapper" id="pdfWrapper">
                 <canvas id="the-canvas"></canvas>
-                
                 <div id="text-layer" class="textLayer"></div>
-                
                 <div id="annotation-layer" class="annotation-layer">
                     <canvas id="highlight-canvas"></canvas>
                 </div>
@@ -59,10 +65,10 @@
                 <span id="notePageLabel" class="note-page-label">Hal 1</span>
             </div>
             <div id="notesList" class="notes-list">
-                <div class="empty-notes">Belum ada catatan di halaman ini.</div>
+                <div class="empty-notes">Belum ada catatan.</div>
             </div>
             <div class="notes-input-area">
-                <textarea id="noteInput" placeholder="Tulis catatanmu di sini..."></textarea>
+                <textarea id="noteInput" placeholder="Tulis catatan..."></textarea>
                 <button id="addNoteBtn" class="btn-add-note">
                     <i class="fas fa-paper-plane"></i> Simpan
                 </button>
@@ -72,28 +78,15 @@
     
     <div id="loadingOverlay" class="loading-overlay active">
         <div class="spinner"></div>
-        <p style="margin-top: 10px; color: white;">Memuat...</p>
+        <p style="margin-top: 10px; color: white;">Memproses...</p>
     </div>
 
     <div id="ratingModal" class="rating-overlay">
         <div class="rating-card">
             <i class="fas fa-award rating-icon"></i>
             <h2>Selesai Membaca!</h2>
-            <p>Berapa rating untuk buku ini?</p>
-            <div class="rating-container">
-                <div class="star-widget" id="starWidget">
-                    <i class="fas fa-star" data-value="1"></i>
-                    <i class="fas fa-star" data-value="2"></i>
-                    <i class="fas fa-star" data-value="3"></i>
-                    <i class="fas fa-star" data-value="4"></i>
-                    <i class="fas fa-star" data-value="5"></i>
-                </div>
-                <input type="number" id="ratingScore" step="0.1" min="0" max="5" placeholder="0.0" class="rating-num-input">
-            </div>
-            <textarea id="ratingReview" placeholder="Tulis ulasan singkatmu (opsional)..."></textarea>
             <div class="rating-actions">
-                <button id="skipRatingBtn" class="btn-secondary">Nanti Saja</button>
-                <button id="submitRatingBtn" class="btn-primary">Kirim Rating</button>
+                <button id="skipRatingBtn" class="btn-secondary">Tutup</button>
             </div>
         </div>
     </div>
