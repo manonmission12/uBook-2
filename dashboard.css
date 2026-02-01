@@ -10,7 +10,7 @@
 .page-title { font-size: 2.5rem; margin-bottom: 10px; color: var(--text-primary); font-weight: 800; }
 .page-subtitle { color: var(--text-secondary); font-size: 1.1rem; }
 
-/* 2. TOOLBAR (SEARCH & FILTER) */
+/* 2. TOOLBAR */
 .dashboard-toolbar {
     display: flex; gap: 15px; justify-content: center; margin-bottom: 3rem; flex-wrap: wrap; width: 100%;
 }
@@ -46,41 +46,92 @@
 }
 
 .book-card {
-    background: var(--bg-card); border-radius: 12px; overflow: hidden;
+    background: var(--bg-card); border-radius: 12px; 
     border: 1px solid var(--border); transition: all 0.3s ease;
     display: flex; flex-direction: column; cursor: pointer;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    position: relative; /* Wajib relative agar tombol simpan bisa absolute */
+    position: relative; 
+    /* Disable select text */
+    user-select: none; -webkit-user-select: none;
 }
 .book-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-color: var(--text-primary); }
 
 .book-card img { 
     width: 100%; height: 280px; object-fit: cover; 
-    border-bottom: 1px solid var(--border); 
+    border-bottom: 1px solid var(--border);
+    border-radius: 12px 12px 0 0;
 }
 
-/* --- TOMBOL SIMPAN (POSISI KANAN BAWAH GAMBAR) --- */
-.btn-save-book {
+/* --- STATUS BUTTON & DROPDOWN --- */
+.book-status-wrapper {
     position: absolute;
-    /* Tinggi gambar 280px. Kita taruh di 235px supaya pas di pojok kanan bawah gambar */
-    top: 235px; 
-    right: 10px;
+    top: 235px; right: 10px;
+    z-index: 50; 
+}
+
+/* Tombol Bulat Status */
+.btn-status-toggle {
     width: 38px; height: 38px;
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid rgba(0,0,0,0.1);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer; z-index: 10;
+    cursor: pointer;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    transition: transform 0.2s, background 0.2s, color 0.2s;
-    color: #9ca3af; /* Warna abu (default/belum disimpan) */
+    transition: transform 0.2s, background 0.2s, border-color 0.2s;
+    color: #9ca3af;
+    position: relative;
+    overflow: hidden;
 }
 
-/* Efek Hover & Aktif */
-.btn-save-book:hover { transform: scale(1.15); background: #fff; }
-.btn-save-book.active { color: #ef4444; border-color: #ef4444; /* Merah hati saat disimpan */ }
-.btn-save-book i { font-size: 1.2rem; pointer-events: none; }
-/* ------------------------------------------------ */
+.btn-status-toggle:hover { transform: scale(1.1); background: #fff; }
+
+/* Warna Icon Status Aktif */
+.btn-status-toggle.want { color: #f59e0b; border-color: #f59e0b; }
+.btn-status-toggle.reading { color: #3b82f6; border-color: #3b82f6; }
+.btn-status-toggle.finished { color: #10b981; border-color: #10b981; }
+
+.btn-status-toggle i { font-size: 1.1rem; pointer-events: none; }
+
+/* Dropdown Menu Pilihan */
+.status-dropdown {
+    position: absolute;
+    bottom: 50px; right: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    width: 180px;
+    display: none; 
+    flex-direction: column;
+    overflow: hidden;
+    animation: popUp 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 100;
+}
+.status-dropdown.active { display: flex; }
+
+@keyframes popUp { from { opacity: 0; transform: translateY(15px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+.status-option {
+    padding: 12px 15px;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex; align-items: center; gap: 12px;
+    transition: 0.2s;
+    background: none; border: none; text-align: left; width: 100%;
+    font-family: inherit; font-weight: 500;
+}
+.status-option:hover { background: var(--bg-input); }
+.status-option i { width: 20px; text-align: center; }
+
+/* Warna Hover Item Menu */
+.status-option.opt-want:hover { color: #f59e0b; background: #fffbeb; }
+.status-option.opt-reading:hover { color: #3b82f6; background: #eff6ff; }
+.status-option.opt-finished:hover { color: #10b981; background: #ecfdf5; }
+.status-option.opt-remove:hover { color: #ef4444; background: #fef2f2; }
+
+/* ------------------------------------------- */
 
 .book-info { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
 .book-info h3 { font-size: 1rem; line-height: 1.4; color: var(--text-primary); margin-bottom: 6px; font-weight: 700; }
@@ -93,7 +144,6 @@
     width: fit-content; margin-bottom: 8px;
 }
 
-/* --- CARD FOOTER & RATING DISPLAY (READ ONLY) --- */
 .card-footer { 
     margin-top: auto; 
     display: flex; 
@@ -104,9 +154,9 @@
 }
 
 .interactive-stars { display: flex; gap: 3px; }
-.interactive-stars i { font-size: 1rem; color: #e5e7eb; } /* Abu-abu */
-.interactive-stars i.filled { color: #f59e0b; } /* Emas */
-.interactive-stars i.user-filled { color: #f59e0b; } /* Biru (Punya User) */
+.interactive-stars i { font-size: 1rem; color: #e5e7eb; }
+.interactive-stars i.filled { color: #f59e0b; }
+.interactive-stars i.user-filled { color: #3b82f6; }
 .rating-number { font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); margin-left: 5px; }
 
 /* 4. MODAL POPUP */
@@ -149,15 +199,38 @@
 }
 .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
 
-/* --- RATING INPUT DI DALAM MODAL --- */
+/* --- RATING INPUT DI MODAL --- */
 .modal-rating-box {
     margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border); text-align: center;
 }
 .rating-label { font-size: 0.95rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px; }
-.modal-stars { display: flex; justify-content: center; gap: 8px; font-size: 1.8rem; cursor: pointer; }
-.modal-stars i { color: #e5e7eb; transition: transform 0.2s, color 0.2s; }
-.modal-stars i:hover, .modal-stars i.hovered { color: #fcd34d; transform: scale(1.2); }
+
+.rating-input-container {
+    display: flex; justify-content: center; align-items: center; gap: 15px;
+}
+
+.modal-stars { display: flex; gap: 8px; font-size: 1.8rem; cursor: pointer; }
+
+.modal-stars i { 
+    color: #e5e7eb; 
+    transition: transform 0.2s;
+    display: inline-block;
+}
+.modal-stars i:hover { transform: scale(1.2); }
 .modal-stars i.active { color: #f59e0b; }
+
+.rating-num-input {
+    width: 60px; padding: 8px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.1rem; font-weight: 700;
+    color: var(--text-primary);
+    background: var(--bg-input);
+    font-family: inherit;
+}
+.rating-num-input:focus { border-color: #f59e0b; outline: none; }
+
 .rating-feedback { margin-top: 10px; font-size: 0.9rem; color: #10b981; font-weight: 600; min-height: 20px; }
 
 /* 5. NAVBAR ACTIONS & PROFILE */

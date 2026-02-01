@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Era Baru Membaca - Beranda</title>
+    <title>uBook - Beranda</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,8 +15,8 @@
 
     <nav class="navbar">
         <div class="nav-brand">
-            <i class="fas fa-book-reader"></i>
-            <span>uBook</span></span>
+            <i class="fas fa-book-open"></i>
+            <span>u<span class="highlight">Book</span></span>
         </div>
         <div class="nav-links" id="navLinks"></div>
         <div class="nav-actions">
@@ -27,8 +27,8 @@
 
     <div class="dashboard-content">
         <header class="header-section">
-            <h1 class="page-title">Jelajahi Ilmu Pengetahuan</h1>
-            <p class="page-subtitle">Koleksi buku terbaik untuk masa depanmu</p>
+            <h1 class="page-title">Jelajahi Dunia Lewat uBook</h1>
+            <p class="page-subtitle">Koleksi buku terbaik untuk generasi cerdas</p>
         </header>
 
         <div class="dashboard-toolbar">
@@ -73,14 +73,20 @@
                     </div>
 
                     <div class="modal-rating-box">
-                        <p class="rating-label">Beri Rating Buku Ini:</p>
-                        <div class="modal-stars" id="modalStars">
-                            <i class="fas fa-star" data-val="1"></i>
-                            <i class="fas fa-star" data-val="2"></i>
-                            <i class="fas fa-star" data-val="3"></i>
-                            <i class="fas fa-star" data-val="4"></i>
-                            <i class="fas fa-star" data-val="5"></i>
+                        <p class="rating-label">Beri Rating (0 - 5):</p>
+                        
+                        <div class="rating-input-container">
+                            <div class="modal-stars" id="modalStars">
+                                <i class="fas fa-star" data-val="1"></i>
+                                <i class="fas fa-star" data-val="2"></i>
+                                <i class="fas fa-star" data-val="3"></i>
+                                <i class="fas fa-star" data-val="4"></i>
+                                <i class="fas fa-star" data-val="5"></i>
+                            </div>
+                            
+                            <input type="number" id="modalRatingInput" class="rating-num-input" step="0.1" min="0" max="5" placeholder="0.0">
                         </div>
+
                         <p id="ratingFeedback" class="rating-feedback"></p>
                     </div>
 
@@ -92,16 +98,14 @@
     <footer class="main-footer">
         <div class="footer-content">
             <div class="footer-section brand">
-                <h3><i class="fas fa-book-reader"></i> uBook</span></h3>
-                <p>Platform perpustakaan digital masa depan untuk generasi pembelajar.</p>
+                <h3><i class="fas fa-book-open"></i> u<span class="highlight">Book</span></h3>
+                <p>Platform perpustakaan digital masa depan.</p>
                 <div class="social-links">
                     <a href="#"><i class="fab fa-instagram"></i></a>
                     <a href="#"><i class="fab fa-twitter"></i></a>
                     <a href="#"><i class="fab fa-github"></i></a>
-                    <a href="#"><i class="fab fa-linkedin"></i></a>
                 </div>
             </div>
-            
             <div class="footer-section links">
                 <h4>Jelajahi</h4>
                 <ul>
@@ -110,20 +114,17 @@
                     <li><a href="profile.html">Profil Saya</a></li>
                 </ul>
             </div>
-            
             <div class="footer-section links">
                 <h4>Bantuan</h4>
                 <ul>
                     <li><a href="#">FAQ</a></li>
                     <li><a href="#">Syarat & Ketentuan</a></li>
-                    <li><a href="#">Kebijakan Privasi</a></li>
                     <li><a href="#">Hubungi Kami</a></li>
                 </ul>
             </div>
         </div>
-        
         <div class="footer-bottom">
-            <p>&copy; 2026 EraBaruMembaca. All rights reserved.</p>
+            <p>&copy; 2026 uBook. All rights reserved.</p>
         </div>
     </footer>
 

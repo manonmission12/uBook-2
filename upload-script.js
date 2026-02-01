@@ -1,69 +1,75 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // 1. Cek Login
+    // --- 0. CEK LOGIN (PENTING) ---
     const currentUser = localStorage.getItem('currentUser');
     if (!currentUser) {
-        alert("Kamu harus login untuk mengupload buku!");
+        alert("Silakan login terlebih dahulu untuk mengupload buku.");
         window.location.href = 'login.html';
         return;
     }
 
-    // 2. Theme Logic
+    // --- 1. DARK MODE SETUP ---
     const themeToggle = document.getElementById('themeToggle');
     const root = document.documentElement;
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    root.setAttribute('data-theme', savedTheme);
-    
+    const icon = themeToggle ? themeToggle.querySelector('i') : null;
+
+    if(localStorage.getItem('theme') === 'dark') {
+        root.setAttribute('data-theme', 'dark');
+        if(icon) icon.classList.replace('fa-moon', 'fa-sun');
+    }
+
     if(themeToggle) {
         themeToggle.addEventListener('click', () => {
             const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             root.setAttribute('data-theme', next);
             localStorage.setItem('theme', next);
+            if(icon) { icon.classList.toggle('fa-moon'); icon.classList.toggle('fa-sun'); }
         });
     }
 
-    // 3. Handle Upload
+    // --- 2. LOGIKA UPLOAD ---
     const uploadForm = document.getElementById('uploadForm');
 
     uploadForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const title = document.getElementById('bookTitle').value;
-        const author = document.getElementById('bookAuthor').value;
+        // Ambil Nilai dari Input
+        const title = document.getElementById('bookTitle').value.trim();
+        const author = document.getElementById('bookAuthor').value.trim();
         const category = document.getElementById('bookCategory').value;
-        const pdf = document.getElementById('bookPdf').value;
-        const cover = document.getElementById('bookCover').value;
+        const cover = document.getElementById('bookCover').value.trim();
+        const file = document.getElementById('bookFile').value.trim();
 
         // Validasi Sederhana
-        if (!pdf.endsWith('.pdf')) {
-            alert("Link file harus berakhiran .pdf");
+        if (!category) {
+            alert("Harap pilih kategori buku!");
             return;
         }
 
-        // Buat Objek Buku Baru
+        // Buat Object Buku Baru
         const newBook = {
-            id: Date.now(), // ID Unik
+            id: 'U-' + Date.now(), // ID Unik berdasarkan waktu
             title: title,
             author: author,
             category: category,
-            pdf: pdf, // Link PDF
-            img: cover || 'https://via.placeholder.com/300x450?text=No+Cover',
-            rating: 5.0, // Default rating
-            uploadedBy: currentUser
+            img: cover,
+            pdf: file,
+            uploadedBy: currentUser,
+            uploadedAt: new Date().toISOString()
         };
 
-        // Simpan ke LocalStorage
-        const myBooks = JSON.parse(localStorage.getItem('myUploadedBooks') || '[]');
-        myBooks.push(newBook);
-        localStorage.setItem('myUploadedBooks', JSON.stringify(myBooks));
+        // Simpan ke LocalStorage ('myUploadedBooks')
+        const existingBooks = JSON.parse(localStorage.getItem('myUploadedBooks') || '[]');
+        existingBooks.push(newBook);
+        localStorage.setItem('myUploadedBooks', JSON.stringify(existingBooks));
 
         // Feedback & Redirect
-        const btn = uploadForm.querySelector('button');
-        btn.innerHTML = '<i class="fas fa-check"></i> Berhasil!';
+        alert("Buku berhasil diupload! Terima kasih kontribusinya.");
         
-        setTimeout(() => {
-            alert("Buku berhasil diupload!");
-            window.location.href = 'profile.html'; // Pindah ke profil untuk melihat buku
-        }, 1000);
+        // Bersihkan Form
+        uploadForm.reset();
+
+        // Arahkan ke Profil agar user bisa melihat bukunya
+        window.location.href = 'profile.html';
     });
 });

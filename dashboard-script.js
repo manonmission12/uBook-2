@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 0. DARK MODE SETUP ---
+    // --- 0. DARK MODE ---
     const themeToggle = document.getElementById('themeToggle');
     const root = document.documentElement;
     const icon = themeToggle ? themeToggle.querySelector('i') : null;
@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
         root.setAttribute('data-theme', 'dark');
         if(icon) icon.classList.replace('fa-moon', 'fa-sun');
     }
-
     if(themeToggle) {
         themeToggle.addEventListener('click', () => {
             const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
@@ -19,15 +18,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 1. NAVIGASI, AVATAR & DROPDOWN ---
+    // --- 1. NAVIGASI ---
     const currentUser = localStorage.getItem('currentUser'); 
     const navLinks = document.getElementById('navLinks');
     const authButtons = document.getElementById('authButtons');
 
     if (currentUser) {
-        // --- JIKA MEMBER ---
         if(navLinks) {
-            // UPDATED: Menambahkan Tombol "Profil" di samping Beranda
             navLinks.innerHTML = `
                 <a href="index.html" class="nav-link active">Beranda</a>
                 <a href="profile.html" class="nav-link">Profil</a>
@@ -42,64 +39,30 @@ document.addEventListener('DOMContentLoaded', () => {
             authButtons.innerHTML = `
                 <div class="nav-profile-wrapper">
                     <button id="profileMenuBtn" class="nav-avatar-btn">
-                        ${avatarSrc 
-                            ? `<img src="${avatarSrc}" alt="Avatar">` 
-                            : `<i class="fas fa-user"></i>`}
+                        ${avatarSrc ? `<img src="${avatarSrc}" alt="Avatar">` : `<i class="fas fa-user"></i>`}
                     </button>
-                    
                     <div id="profileDropdown" class="profile-dropdown">
-                        <div class="dropdown-header">
-                            <p>Halo,</p>
-                            <strong>${currentUser}</strong>
-                        </div>
-                        <a href="upload.html" class="dropdown-item">
-                            <i class="fas fa-cloud-upload-alt"></i> Upload Buku
-                        </a>
-                        <a href="profile.html" class="dropdown-item">
-                            <i class="fas fa-id-card"></i> Profil Saya
-                        </a>
-                        <button id="logoutBtn" class="dropdown-item danger">
-                            <i class="fas fa-sign-out-alt"></i> Keluar
-                        </button>
+                        <div class="dropdown-header"><p>Halo,</p><strong>${currentUser}</strong></div>
+                        <a href="upload.html" class="dropdown-item"><i class="fas fa-cloud-upload-alt"></i> Upload Buku</a>
+                        <a href="profile.html" class="dropdown-item"><i class="fas fa-id-card"></i> Profil Saya</a>
+                        <button id="logoutBtn" class="dropdown-item danger"><i class="fas fa-sign-out-alt"></i> Keluar</button>
                     </div>
-                </div>
-            `;
-
+                </div>`;
+            
             const menuBtn = document.getElementById('profileMenuBtn');
             const dropdown = document.getElementById('profileDropdown');
-            
-            menuBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                dropdown.classList.toggle('active');
-            });
-
-            document.addEventListener('click', (e) => {
-                if (!menuBtn.contains(e.target) && !dropdown.contains(e.target)) {
-                    dropdown.classList.remove('active');
-                }
-            });
-
-            // LOGOUT -> Redirect ke Login.html
+            menuBtn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('active'); });
+            document.addEventListener('click', (e) => { if (!menuBtn.contains(e.target)) dropdown.classList.remove('active'); });
             document.getElementById('logoutBtn').addEventListener('click', () => {
-                if(confirm('Yakin ingin keluar?')) {
-                    localStorage.removeItem('currentUser');
-                    window.location.href = 'login.html';
-                }
+                if(confirm('Yakin ingin keluar?')) { localStorage.removeItem('currentUser'); window.location.href = 'login.html'; }
             });
         }
     } else {
-        // --- JIKA TAMU ---
         if(navLinks) navLinks.innerHTML = `<a href="index.html" class="nav-link active">Beranda</a>`;
-        
-        if(authButtons) {
-            authButtons.innerHTML = `
-                <a href="login.html" class="nav-btn" style="text-decoration:none; color:var(--text-primary); margin-right:15px; font-weight:600;">Masuk</a>
-                <a href="signup.html" class="nav-btn" style="background:var(--text-primary); color:var(--bg-card); padding:8px 20px; border-radius:20px; text-decoration:none; font-weight:600;">Daftar</a>
-            `;
-        }
+        if(authButtons) authButtons.innerHTML = `<a href="login.html" class="nav-btn" style="text-decoration:none; margin-right:15px; font-weight:600;">Masuk</a><a href="signup.html" class="nav-btn" style="background:var(--text-primary); color:var(--bg-card); padding:8px 20px; border-radius:20px; text-decoration:none; font-weight:600;">Daftar</a>`;
     }
 
-    // --- 2. DATA 16 BUKU BAWAAN (DEFAULT) ---
+    // --- 2. DATA BUKU ---
     const defaultBooks = [
         { id: "B1", title: "Filosofi Teras", author: "Henry Manampiring", category: "Filsafat", img: "covers/filosofi teras.png", pdf: "books/1. Filosofi Teras.pdf", rating: 4.8 },
         { id: "B2", title: "This is Marketing", author: "Seth Godin", category: "Bisnis", img: "covers/this is marketing.png", pdf: "books/2. This is marketing.pdf", rating: 4.6 },
@@ -122,14 +85,43 @@ document.addEventListener('DOMContentLoaded', () => {
     let uploadedBooks = JSON.parse(localStorage.getItem('myUploadedBooks') || '[]');
     let allBooks = [...uploadedBooks.reverse(), ...defaultBooks]; 
 
-    // --- 3. RENDER BUKU (GRID) ---
+    // --- 3. RENDER BUKU ---
     const bookGrid = document.getElementById('bookGrid');
     const searchInput = document.getElementById('searchInput');
     const categoryFilter = document.getElementById('categoryFilter');
 
-    // Ambil Data Rating & Simpan dari LocalStorage
+    // Load Data
     const userRatings = JSON.parse(localStorage.getItem('userRatings') || '{}');
     let savedBooks = JSON.parse(localStorage.getItem(`savedBooks_${currentUser}`) || '[]');
+    let readingHistory = JSON.parse(localStorage.getItem(`readingHistory_${currentUser}`) || '{}');
+
+    // Helper: Cek Status Buku
+    function getBookStatus(book) {
+        if (readingHistory[book.title] === 'finished') return 'finished';
+        if (readingHistory[book.title] === 'reading') return 'reading';
+        if (savedBooks.some(b => b.id.toString() === book.id.toString())) return 'want';
+        return 'none';
+    }
+
+    // Helper: Simpan Status
+    function setBookStatus(book, newStatus) {
+        if (newStatus === 'want') {
+            if (!savedBooks.some(b => b.id.toString() === book.id.toString())) savedBooks.push(book);
+            delete readingHistory[book.title];
+        } else if (newStatus === 'reading') {
+            readingHistory[book.title] = 'reading';
+            savedBooks = savedBooks.filter(b => b.id.toString() !== book.id.toString());
+        } else if (newStatus === 'finished') {
+            readingHistory[book.title] = 'finished';
+            savedBooks = savedBooks.filter(b => b.id.toString() !== book.id.toString());
+        } else {
+            // Case 'none' -> Hapus semua
+            delete readingHistory[book.title];
+            savedBooks = savedBooks.filter(b => b.id.toString() !== book.id.toString());
+        }
+        localStorage.setItem(`savedBooks_${currentUser}`, JSON.stringify(savedBooks));
+        localStorage.setItem(`readingHistory_${currentUser}`, JSON.stringify(readingHistory));
+    }
 
     function renderBooks(filterText = '', category = 'all') {
         if (!bookGrid) return;
@@ -143,11 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (filtered.length === 0) {
-            bookGrid.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; margin-top: 40px; color: var(--text-tertiary);">
-                    <i class="fas fa-search" style="font-size: 2rem; opacity: 0.5; margin-bottom: 10px;"></i>
-                    <p>Buku tidak ditemukan.</p>
-                </div>`;
+            bookGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; margin-top:40px; color:var(--text-tertiary);"><p>Buku tidak ditemukan.</p></div>`;
             return;
         }
 
@@ -156,27 +144,37 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = 'book-card';
             const imgSrc = book.img || book.image || book.cover;
             
-            // --- LOGIKA RATING DISPLAY ---
             const myRating = userRatings[book.title];
             const currentScore = myRating ? myRating.score : (book.rating || 0);
+            const displayScore = parseFloat(currentScore).toFixed(1);
             
             let starsHTML = '';
             for (let i = 1; i <= 5; i++) {
                 let fillClass = '';
-                if (myRating) fillClass = (i <= currentScore) ? 'user-filled' : '';
-                else fillClass = (i <= currentScore) ? 'filled' : '';
+                if (Math.round(currentScore) >= i) fillClass = myRating ? 'user-filled' : 'filled';
                 starsHTML += `<i class="fas fa-star ${fillClass}"></i>`;
             }
 
-            // --- LOGIKA TOMBOL SIMPAN ---
-            const isSaved = savedBooks.some(b => b.id.toString() === book.id.toString());
-            const saveIconClass = isSaved ? 'fas' : 'far';
-            const activeClass = isSaved ? 'active' : '';
+            const status = getBookStatus(book);
+            let btnClass = '';
+            let btnIcon = 'far fa-bookmark'; // Default (None)
+
+            if (status === 'want') { btnClass = 'want'; btnIcon = 'fas fa-bookmark'; }
+            else if (status === 'reading') { btnClass = 'reading'; btnIcon = 'fas fa-book-reader'; }
+            else if (status === 'finished') { btnClass = 'finished'; btnIcon = 'fas fa-check-circle'; }
 
             card.innerHTML = `
-                <button class="btn-save-book ${activeClass}" data-id="${book.id}">
-                    <i class="${saveIconClass} fa-bookmark"></i>
-                </button>
+                <div class="book-status-wrapper">
+                    <button class="btn-status-toggle ${btnClass}" data-id="${book.id}">
+                        <i class="${btnIcon}"></i>
+                    </button>
+                    <div class="status-dropdown">
+                        <button class="status-option opt-want" data-val="want"><i class="fas fa-bookmark"></i> Ingin Dibaca</button>
+                        <button class="status-option opt-reading" data-val="reading"><i class="fas fa-book-reader"></i> Sedang Dibaca</button>
+                        <button class="status-option opt-finished" data-val="finished"><i class="fas fa-check-circle"></i> Sudah Selesai</button>
+                        <button class="status-option opt-remove" data-val="none"><i class="fas fa-trash-alt"></i> Hapus Status</button>
+                    </div>
+                </div>
 
                 <img src="${imgSrc}" alt="${book.title}" onerror="this.src='https://via.placeholder.com/300x450?text=Cover'">
                 <div class="book-info">
@@ -185,52 +183,60 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p>${book.author}</p>
                     <div class="card-footer">
                         <div class="interactive-stars">${starsHTML}</div>
-                        <span class="rating-number">${currentScore || 4.5}</span>
+                        <span class="rating-number">${displayScore || 4.5}</span>
                     </div>
                 </div>
             `;
             
+            // LOGIKA BARU: Klik Tombol -> Buka Menu
+            const wrapper = card.querySelector('.book-status-wrapper');
+            const toggleBtn = wrapper.querySelector('.btn-status-toggle');
+            const dropdown = wrapper.querySelector('.status-dropdown');
+
+            toggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Biar modal gak kebuka
+                if (!currentUser) { if(confirm("Login dulu yuk!")) window.location.href='login.html'; return; }
+                
+                // Tutup dropdown lain biar gak numpuk
+                document.querySelectorAll('.status-dropdown').forEach(d => {
+                    if (d !== dropdown) d.classList.remove('active');
+                });
+                
+                // Toggle Menu ini
+                dropdown.classList.toggle('active');
+            });
+
+            // Klik Pilihan Menu
+            wrapper.querySelectorAll('.status-option').forEach(opt => {
+                opt.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const newVal = opt.getAttribute('data-val');
+                    setBookStatus(book, newVal);
+                    dropdown.classList.remove('active');
+                    renderBooks(searchInput.value, categoryFilter.value); // Refresh Tampilan
+                });
+            });
+
             card.addEventListener('click', (e) => {
-                if (e.target.closest('.btn-save-book')) return;
+                if (e.target.closest('.book-status-wrapper')) return;
                 openModal(book);
             });
-            
+
             bookGrid.appendChild(card);
-        });
-
-        // Event Listener Save Button
-        document.querySelectorAll('.btn-save-book').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (!currentUser) {
-                    if(confirm("Login dulu yuk untuk menyimpan buku!")) window.location.href = 'login.html';
-                    return;
-                }
-
-                const bookId = this.dataset.id;
-                const bookToSave = allBooks.find(b => b.id.toString() === bookId.toString());
-
-                if (!bookToSave) return;
-
-                const index = savedBooks.findIndex(b => b.id.toString() === bookToSave.id.toString());
-
-                if (index !== -1) {
-                    savedBooks.splice(index, 1); // Unsave
-                    this.classList.remove('active');
-                    this.querySelector('i').classList.replace('fas', 'far');
-                } else {
-                    savedBooks.push(bookToSave); // Save
-                    this.classList.add('active');
-                    this.querySelector('i').classList.replace('far', 'fas');
-                }
-                localStorage.setItem(`savedBooks_${currentUser}`, JSON.stringify(savedBooks));
-            });
         });
     }
 
-    // --- 4. MODAL & RATING ---
+    // Klik luar -> Tutup Semua Dropdown
+    document.addEventListener('click', (e) => {
+        if(!e.target.closest('.book-status-wrapper')) {
+            document.querySelectorAll('.status-dropdown').forEach(d => d.classList.remove('active'));
+        }
+    });
+
+    // --- 4. MODAL & RATING LOGIC ---
     const modal = document.getElementById('bookModal');
     const feedback = document.getElementById('ratingFeedback');
+    const ratingInput = document.getElementById('modalRatingInput');
 
     function openModal(book) {
         if (!modal) return;
@@ -247,6 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const pdfLink = book.file || book.pdf || book.source;
             if (pdfLink) {
                 if (currentUser) {
+                    setBookStatus(book, 'reading'); // Auto set Reading
                     const safeTitle = encodeURIComponent(book.title);
                     const safeSource = encodeURIComponent(pdfLink);
                     window.location.href = `read.html?title=${safeTitle}&source=${safeSource}`;
@@ -256,50 +263,56 @@ document.addEventListener('DOMContentLoaded', () => {
             } else { alert("File tidak tersedia."); }
         };
 
-        // Modal Rating Logic
         const modalStars = document.querySelectorAll('#modalStars i');
         const myRating = userRatings[book.title];
-        const currentVal = myRating ? myRating.score : 0;
+        let currentVal = myRating ? myRating.score : 0;
 
-        updateModalStars(currentVal);
-        feedback.innerText = myRating ? "Kamu sudah memberi rating ini." : "Sentuh bintang untuk menilai.";
+        updateVisualStars(currentVal);
+        ratingInput.value = currentVal > 0 ? currentVal : '';
+        feedback.innerText = myRating ? "Rating tersimpan." : "Beri penilaian.";
 
-        modalStars.forEach(star => {
-            star.onclick = function() {
-                if (!currentUser) {
-                    if(confirm("Login dulu untuk memberi rating!")) window.location.href = 'login.html';
-                    return;
-                }
-                const val = parseInt(this.getAttribute('data-val'));
-                userRatings[book.title] = { score: val, date: new Date().toISOString() };
-                localStorage.setItem('userRatings', JSON.stringify(userRatings));
-                updateModalStars(val);
-                feedback.innerText = "Terima kasih! Rating tersimpan.";
-                renderBooks(searchInput.value, categoryFilter.value);
-            }
-        });
+        modalStars.forEach(star => { star.onclick = function() { saveRating(this.getAttribute('data-val')); } });
+
+        ratingInput.oninput = function() {
+            let val = parseFloat(this.value);
+            if (isNaN(val)) val = 0; if (val > 5) val = 5; if (val < 0) val = 0;
+            saveRating(val);
+        };
+
+        function saveRating(val) {
+            if (!currentUser) { if(confirm("Login dulu!")) window.location.href = 'login.html'; return; }
+            userRatings[book.title] = { score: parseFloat(val), date: new Date().toISOString() };
+            localStorage.setItem('userRatings', JSON.stringify(userRatings));
+            
+            setBookStatus(book, 'finished'); // Auto set Finished
+
+            ratingInput.value = val;
+            updateVisualStars(val);
+            feedback.innerText = "Terima kasih! Rating tersimpan.";
+            renderBooks(searchInput.value, categoryFilter.value);
+        }
 
         modal.classList.add('active');
     }
 
-    function updateModalStars(val) {
-        document.querySelectorAll('#modalStars i').forEach(s => {
+    function updateVisualStars(val) {
+        const stars = document.querySelectorAll('#modalStars i');
+        stars.forEach(s => {
             const sVal = parseInt(s.getAttribute('data-val'));
-            if (sVal <= val) s.classList.add('active');
-            else s.classList.remove('active');
+            s.classList.remove('active'); s.style.background = ''; s.style.webkitBackgroundClip = ''; s.style.webkitTextFillColor = '';
+            if (val >= sVal) s.classList.add('active');
+            else if (val > sVal - 1) {
+                const percentage = (val - (sVal - 1)) * 100;
+                s.style.background = `linear-gradient(90deg, #f59e0b ${percentage}%, #e5e7eb ${percentage}%)`;
+                s.style.webkitBackgroundClip = 'text'; s.style.webkitTextFillColor = 'transparent';
+            }
         });
     }
 
     window.closeModal = () => modal.classList.remove('active');
     if(modal) modal.addEventListener('click', (e) => { if(e.target === modal) window.closeModal(); });
 
-    // --- 5. INITIALIZE ---
     renderBooks();
-    
-    if(searchInput) {
-        searchInput.addEventListener('input', (e) => renderBooks(e.target.value, categoryFilter.value));
-    }
-    if(categoryFilter) {
-        categoryFilter.addEventListener('change', (e) => renderBooks(searchInput.value, e.target.value));
-    }
+    if(searchInput) searchInput.addEventListener('input', (e) => renderBooks(e.target.value, categoryFilter.value));
+    if(categoryFilter) categoryFilter.addEventListener('change', (e) => renderBooks(searchInput.value, e.target.value));
 });

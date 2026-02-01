@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil Saya</title>
+    <title>Profil Saya - uBook</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -35,11 +35,9 @@
                     </button>
                     <input type="file" id="avatarInput" accept="image/*" style="display: none;">
                 </div>
-                
                 <p class="photo-hint">Ukuran rekomen: 300x300 px (1:1)</p>
-
                 <h1 id="displayName">Nama User</h1>
-                <p class="user-role">Member Perpustakaan</p>
+                <p class="user-role">Member uBook</p>
                 <p id="joinDate" class="join-date">Bergabung: -</p>
             </div>
 
@@ -59,14 +57,26 @@
 
         <div class="profile-content-right">
             
-            <div class="user-uploads-section" style="margin-bottom: 30px;">
-                <h2 style="color: #ef4444;"><i class="fas fa-heart"></i> Koleksi Favorit Saya</h2>
+            <div class="user-uploads-section">
+                <h2 style="color: #3b82f6;"><i class="fas fa-book-reader"></i> Sedang Dibaca</h2>
+                <div id="readingSection" class="book-grid-mini">
+                    </div>
+            </div>
+
+            <div class="user-uploads-section">
+                <h2 style="color: #10b981;"><i class="fas fa-check-circle"></i> Selesai Dibaca</h2>
+                <div id="finishedSection" class="book-grid-mini">
+                    </div>
+            </div>
+
+            <div class="user-uploads-section">
+                <h2 style="color: #ef4444;"><i class="fas fa-heart"></i> Koleksi Favorit</h2>
                 <div id="savedBookGrid" class="book-grid-mini">
                     </div>
             </div>
 
             <div class="user-uploads-section">
-                <h2><i class="fas fa-cloud-upload-alt"></i> Buku Upload Saya</h2>
+                <h2><i class="fas fa-cloud-upload-alt"></i> Upload Saya</h2>
                 <div id="userBookGrid" class="book-grid-mini">
                     </div>
             </div>
@@ -77,16 +87,14 @@
     <footer class="main-footer">
         <div class="footer-content">
             <div class="footer-section brand">
-                <h3><i class="fas fa-book-reader"></i> EraBaru<span class="highlight">Membaca</span></h3>
-                <p>Platform perpustakaan digital masa depan untuk generasi pembelajar.</p>
+                <h3><i class="fas fa-book-open"></i> u<span class="highlight">Book</span></h3>
+                <p>Platform perpustakaan digital masa depan.</p>
                 <div class="social-links">
                     <a href="#"><i class="fab fa-instagram"></i></a>
                     <a href="#"><i class="fab fa-twitter"></i></a>
                     <a href="#"><i class="fab fa-github"></i></a>
-                    <a href="#"><i class="fab fa-linkedin"></i></a>
                 </div>
             </div>
-            
             <div class="footer-section links">
                 <h4>Jelajahi</h4>
                 <ul>
@@ -95,20 +103,17 @@
                     <li><a href="profile.html">Profil Saya</a></li>
                 </ul>
             </div>
-            
             <div class="footer-section links">
                 <h4>Bantuan</h4>
                 <ul>
                     <li><a href="#">FAQ</a></li>
                     <li><a href="#">Syarat & Ketentuan</a></li>
-                    <li><a href="#">Kebijakan Privasi</a></li>
                     <li><a href="#">Hubungi Kami</a></li>
                 </ul>
             </div>
         </div>
-        
         <div class="footer-bottom">
-            <p>&copy; 2026 EraBaruMembaca. All rights reserved.</p>
+            <p>&copy; 2026 uBook. All rights reserved.</p>
         </div>
     </footer>
 
