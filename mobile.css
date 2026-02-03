@@ -1,0 +1,103 @@
+/* --- MOBILE RESPONSIVE STYLES --- */
+/* File ini khusus menangani tampilan di HP (Layar < 768px) */
+
+@media (max-width: 768px) {
+
+    /* 1. NAVBAR JADI HAMBURGER */
+    .menu-toggle {
+        display: block !important; /* Munculkan tombol garis tiga */
+    }
+
+    .nav-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: var(--bg-card);
+        flex-direction: column;
+        padding: 20px;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        display: none; /* Default sembunyi */
+        gap: 15px;
+        z-index: 999;
+    }
+
+    /* Class ini akan ditambahkan JS saat tombol diklik */
+    .nav-menu.active {
+        display: flex;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .nav-right {
+        flex-direction: column;
+        width: 100%;
+        gap: 15px;
+        border-top: 1px solid var(--border);
+        padding-top: 15px;
+        justify-content: center;
+    }
+
+    /* 2. GRID BUKU (AGAR TIDAK GEPENG) */
+    /* Kita paksa 2 kolom di HP biar pas, atau 1 kalau layar kecil banget */
+    .book-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important; 
+        gap: 15px;
+    }
+
+    .book-card img {
+        height: 200px; /* Perkecil tinggi gambar di HP */
+    }
+
+    .book-info h3 {
+        font-size: 0.95rem; /* Font judul sedikit lebih kecil */
+    }
+
+    /* 3. TOOLBAR (SEARCH & SORT) */
+    .dashboard-toolbar {
+        flex-direction: column; /* Susun ke bawah */
+        gap: 10px;
+    }
+
+    .search-box, .sort-box {
+        width: 100%; /* Lebar penuh */
+        max-width: none;
+    }
+
+    /* 4. MODAL DETAIL BUKU (POPUP) */
+    .modal-content {
+        flex-direction: column;
+        width: 95%;
+        height: 85vh; /* Jangan full layar, kasih sisa */
+        overflow-y: auto; /* Biar bisa discroll */
+    }
+
+    .modal-body {
+        flex-direction: column;
+    }
+
+    .modal-img-wrapper {
+        padding: 20px;
+        height: auto;
+        min-height: 250px;
+    }
+
+    .modal-img-wrapper img {
+        max-height: 220px;
+    }
+
+    .modal-info {
+        padding: 20px;
+    }
+
+    /* 5. FONTS & HEADER */
+    .page-title {
+        font-size: 1.8rem;
+    }
+}

@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>uBook Reader</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf_viewer.min.css">
-    
     <link rel="stylesheet" href="read.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 </head>
@@ -19,19 +17,34 @@
         </div>
         
         <div class="nav-center">
-            <button id="prevBtn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
-            <span id="pageInfo">Hal 1</span>
-            <button id="nextBtn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+            <button id="prevBtn" class="nav-btn" title="Halaman Sebelumnya"><i class="fas fa-chevron-left"></i></button>
+            
+            <div class="page-search-box">
+                <input type="number" id="pageInput" value="1" min="1">
+                <span id="pageTotal">/ -</span>
+            </div>
+            
+            <button id="nextBtn" class="nav-btn" title="Halaman Selanjutnya"><i class="fas fa-chevron-right"></i></button>
             <button id="finishBtn" class="nav-btn finish-btn" style="display: none;">Selesai <i class="fas fa-check"></i></button>
         </div>
 
         <div class="nav-right">
+            
+            <div class="app-nav-tools">
+                <a href="index.html" class="tool-btn" title="Beranda"><i class="fas fa-home"></i></a>
+                <a href="profile.html" class="tool-btn" title="Profil Saya"><i class="fas fa-user"></i></a>
+            </div>
+
+            <div class="separator"></div>
+
             <div class="annotation-tools">
                 <button id="undoBtn" class="tool-btn" title="Undo (Ctrl+Z)"><i class="fas fa-undo"></i></button>
                 <button id="redoBtn" class="tool-btn" title="Redo (Ctrl+Y)"><i class="fas fa-redo"></i></button>
-                <div class="separator"></div>
+                <div class="separator-small"></div>
+                
                 <button id="highlightBtn" class="tool-btn" title="Stabilo"><i class="fas fa-highlighter"></i></button>
-                <button id="eraserBtn" class="tool-btn" title="Penghapus"><i class="fas fa-eraser"></i></button>
+                <button id="moveBtn" class="tool-btn" title="Geser Stabilo"><i class="fas fa-arrows-alt"></i></button> <button id="eraserBtn" class="tool-btn" title="Penghapus"><i class="fas fa-eraser"></i></button>
+                
                 <button id="clearPageBtn" class="tool-btn" title="Bersihkan Halaman"><i class="fas fa-trash-alt"></i></button>
             </div>
             
@@ -44,7 +57,6 @@
     </nav>
 
     <div class="main-reader-layout">
-        
         <aside class="page-nav-sidebar">
             <div id="pageNavList" class="page-nav-list"></div>
         </aside>
@@ -85,8 +97,20 @@
         <div class="rating-card">
             <i class="fas fa-award rating-icon"></i>
             <h2>Selesai Membaca!</h2>
+            <div class="rating-container">
+                <div class="star-widget" id="starWidget">
+                    <i class="fas fa-star" data-value="1"></i>
+                    <i class="fas fa-star" data-value="2"></i>
+                    <i class="fas fa-star" data-value="3"></i>
+                    <i class="fas fa-star" data-value="4"></i>
+                    <i class="fas fa-star" data-value="5"></i>
+                </div>
+                <input type="number" id="ratingScore" step="0.1" min="0" max="5" placeholder="0.0" class="rating-num-input">
+            </div>
+            <textarea id="ratingReview" placeholder="Tulis ulasan..."></textarea>
             <div class="rating-actions">
                 <button id="skipRatingBtn" class="btn-secondary">Tutup</button>
+                <button id="submitRatingBtn" class="btn-primary">Kirim</button>
             </div>
         </div>
     </div>

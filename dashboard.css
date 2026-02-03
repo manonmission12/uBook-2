@@ -1,4 +1,4 @@
-/* --- DASHBOARD STYLING LENGKAP --- */
+/* --- DASHBOARD STYLING LENGKAP (HIGH CONTRAST FIX) --- */
 
 /* 1. CONTAINER & HEADER */
 .dashboard-content { 
@@ -12,7 +12,7 @@
 
 /* 2. TOOLBAR */
 .dashboard-toolbar {
-    display: flex; gap: 15px; justify-content: center; margin-bottom: 3rem; flex-wrap: wrap; width: 100%;
+    display: flex; gap: 15px; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; width: 100%;
 }
 
 .search-box { 
@@ -32,12 +32,94 @@
     display: flex; align-items: center; padding: 0 15px; box-sizing: border-box;
 }
 .sort-box select {
-    width: 100%; border: none; background: transparent; color: var(--text-primary);
+    width: 100%; border: none; background: transparent; color: rgba(125, 118, 118, 0.791);
     font-size: 1rem; outline: none; cursor: pointer; padding: 14px 0;
 }
 .sort-box i { color: var(--text-tertiary); margin-right: 10px; }
 
-/* 3. GRID BUKU */
+/* --- 3. CATEGORY TABS (UPDATED: HIGH CONTRAST) --- */
+.category-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 3rem;
+}
+
+.btn-cat {
+    padding: 8px 20px;
+    border-radius: 50px;
+    background: var(--bg-card); 
+    border: 1px solid var(--border);
+    /* GANTI: Pakai text-primary (lebih terang) daripada text-secondary */
+    color: var(--text-primary); 
+    
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+/* KHUSUS MODE GELAP (FORCE CONTRAST) */
+[data-theme="dark"] .btn-cat:not(.active) {
+    background-color: #374151; /* Abu-abu lebih terang dari background */
+    color: #000000; /* Putih mutlak */
+    border-color: #4b5563;
+}
+
+[data-theme="dark"] .btn-cat:not(.active):hover {
+    background-color: #000000; /* Lebih terang lagi saat hover */
+}
+
+/* Hover State Umum */
+.btn-cat:hover {
+    background: var(--bg-input);
+    border-color: var(--text-tertiary);
+    transform: translateY(-2px);
+}
+
+/* Active State (Tombol Hijau - Tetap) */
+.btn-cat.active {
+    background: #10b981 !important;
+    color: #ffffff !important;
+    border-color: #10b981 !important;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+}
+
+.saved-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-upload-inline {
+    padding: 8px 18px;
+    border-radius: 50px;
+    background: transparent;
+    border: 1px dashed var(--text-tertiary);
+    color: var(--text-primary); /* Ubah ke primary biar jelas */
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.3s;
+}
+
+[data-theme="dark"] .btn-upload-inline {
+    color: #fff;
+    border-color: #6b7280;
+}
+
+.btn-upload-inline:hover {
+    border-color: #10b981;
+    color: #10b981 !important;
+    background: var(--bg-input);
+}
+
+/* 4. GRID BUKU */
 .book-grid { 
     display: grid; 
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
@@ -51,7 +133,6 @@
     display: flex; flex-direction: column; cursor: pointer;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     position: relative; 
-    /* Disable select text */
     user-select: none; -webkit-user-select: none;
 }
 .book-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-color: var(--text-primary); }
@@ -69,7 +150,6 @@
     z-index: 50; 
 }
 
-/* Tombol Bulat Status */
 .btn-status-toggle {
     width: 38px; height: 38px;
     background: rgba(255, 255, 255, 0.95);
@@ -86,14 +166,12 @@
 
 .btn-status-toggle:hover { transform: scale(1.1); background: #fff; }
 
-/* Warna Icon Status Aktif */
 .btn-status-toggle.want { color: #f59e0b; border-color: #f59e0b; }
 .btn-status-toggle.reading { color: #3b82f6; border-color: #3b82f6; }
 .btn-status-toggle.finished { color: #10b981; border-color: #10b981; }
 
 .btn-status-toggle i { font-size: 1.1rem; pointer-events: none; }
 
-/* Dropdown Menu Pilihan */
 .status-dropdown {
     position: absolute;
     bottom: 50px; right: 0;
@@ -125,7 +203,6 @@
 .status-option:hover { background: var(--bg-input); }
 .status-option i { width: 20px; text-align: center; }
 
-/* Warna Hover Item Menu */
 .status-option.opt-want:hover { color: #f59e0b; background: #fffbeb; }
 .status-option.opt-reading:hover { color: #3b82f6; background: #eff6ff; }
 .status-option.opt-finished:hover { color: #10b981; background: #ecfdf5; }
@@ -159,7 +236,7 @@
 .interactive-stars i.user-filled { color: #3b82f6; }
 .rating-number { font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); margin-left: 5px; }
 
-/* 4. MODAL POPUP */
+/* 5. MODAL POPUP */
 .modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px);
@@ -233,7 +310,7 @@
 
 .rating-feedback { margin-top: 10px; font-size: 0.9rem; color: #10b981; font-weight: 600; min-height: 20px; }
 
-/* 5. NAVBAR ACTIONS & PROFILE */
+/* 6. NAVBAR ACTIONS & PROFILE */
 .nav-actions { display: flex; align-items: center; gap: 25px; }
 .nav-profile-wrapper { position: relative; }
 

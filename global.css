@@ -53,9 +53,6 @@ body {
     gap: 10px;
 }
 
-.nav-brand i { color: #10b981; }
-.highlight { color: #10b981; }
-
 .nav-links {
     display: flex;
     gap: 20px;
