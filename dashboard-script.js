@@ -18,51 +18,70 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 1. NAVIGASI ---
+    // --- 1. MOBILE MENU LOGIC ---
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const navMenu = document.getElementById('navMenu');
+
+    if (mobileMenuBtn && navMenu) {
+        mobileMenuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            const menuIcon = mobileMenuBtn.querySelector('i');
+            if (navMenu.classList.contains('active')) {
+                menuIcon.classList.replace('fa-bars', 'fa-times');
+            } else {
+                menuIcon.classList.replace('fa-times', 'fa-bars');
+            }
+        });
+    }
+
+    // --- 2. AUTH & USER INFO (PERBAIKAN FOTO PROFIL) ---
     const currentUser = localStorage.getItem('currentUser'); 
-    const navLinks = document.getElementById('navLinks');
-    const authButtons = document.getElementById('authButtons');
+    const profileMenuWrapper = document.getElementById('profileMenuWrapper');
+    const loginBtnContainer = document.getElementById('loginBtnContainer');
+    const userDisplay = document.getElementById('userDisplay');
 
     if (currentUser) {
-        if(navLinks) {
-            navLinks.innerHTML = `
-                <a href="index.html" class="nav-link active">Beranda</a>
-                <a href="profile.html" class="nav-link">Profil</a>
-                <a href="upload.html" class="nav-link">Upload Buku</a>
-            `;
+        // User Login
+        if(profileMenuWrapper) profileMenuWrapper.style.display = 'flex';
+        if(loginBtnContainer) loginBtnContainer.style.display = 'none';
+        if(userDisplay) userDisplay.innerText = `Halo, ${currentUser}`;
+
+        // --- LOGIKA UPDATE AVATAR DI SINI ---
+        const avatarImg = document.querySelector('.profile-trigger .avatar');
+        const savedAvatar = localStorage.getItem(`avatar_${currentUser}`);
+
+        if (avatarImg) {
+            if (savedAvatar) {
+                // Jika ada foto tersimpan, pakai itu
+                avatarImg.src = savedAvatar;
+            } else {
+                // Jika tidak ada, pakai inisial nama User yang Login
+                avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser)}&background=random&color=fff`;
+            }
+        }
+        // -------------------------------------
+
+        // Profile Dropdown Logic
+        const profileTrigger = document.getElementById('profileTrigger');
+        const profileDropdown = document.getElementById('profileDropdown');
+        if(profileTrigger && profileDropdown) {
+            profileTrigger.addEventListener('click', (e) => { e.stopPropagation(); profileDropdown.classList.toggle('active'); });
+            document.addEventListener('click', (e) => { if (!profileTrigger.contains(e.target)) profileDropdown.classList.remove('active'); });
         }
         
-        const savedAvatar = localStorage.getItem(`avatar_${currentUser}`);
-        const avatarSrc = savedAvatar || null;
-
-        if(authButtons) {
-            authButtons.innerHTML = `
-                <div class="nav-profile-wrapper">
-                    <button id="profileMenuBtn" class="nav-avatar-btn">
-                        ${avatarSrc ? `<img src="${avatarSrc}" alt="Avatar">` : `<i class="fas fa-user"></i>`}
-                    </button>
-                    <div id="profileDropdown" class="profile-dropdown">
-                        <div class="dropdown-header"><p>Halo,</p><strong>${currentUser}</strong></div>
-                        <a href="upload.html" class="dropdown-item"><i class="fas fa-cloud-upload-alt"></i> Upload Buku</a>
-                        <a href="profile.html" class="dropdown-item"><i class="fas fa-id-card"></i> Profil Saya</a>
-                        <button id="logoutBtn" class="dropdown-item danger"><i class="fas fa-sign-out-alt"></i> Keluar</button>
-                    </div>
-                </div>`;
-            
-            const menuBtn = document.getElementById('profileMenuBtn');
-            const dropdown = document.getElementById('profileDropdown');
-            menuBtn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('active'); });
-            document.addEventListener('click', (e) => { if (!menuBtn.contains(e.target)) dropdown.classList.remove('active'); });
-            document.getElementById('logoutBtn').addEventListener('click', () => {
+        const logoutBtn = document.getElementById('logoutBtn');
+        if(logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
                 if(confirm('Yakin ingin keluar?')) { localStorage.removeItem('currentUser'); window.location.href = 'login.html'; }
             });
         }
     } else {
-        if(navLinks) navLinks.innerHTML = `<a href="index.html" class="nav-link active">Beranda</a>`;
-        if(authButtons) authButtons.innerHTML = `<a href="login.html" class="nav-btn" style="text-decoration:none; margin-right:15px; font-weight:600;">Masuk</a><a href="signup.html" class="nav-btn" style="background:var(--text-primary); color:var(--bg-card); padding:8px 20px; border-radius:20px; text-decoration:none; font-weight:600;">Daftar</a>`;
+        // User Tamu
+        if(profileMenuWrapper) profileMenuWrapper.style.display = 'none';
+        if(loginBtnContainer) loginBtnContainer.style.display = 'block';
     }
 
-    // --- 2. DATA BUKU ---
+    // --- 3. DATA BUKU (16 ORIGINAL - FILE LOKAL) ---
     const defaultBooks = [
         { id: "B1", title: "Filosofi Teras", author: "Henry Manampiring", category: "Filsafat", img: "covers/filosofi teras.png", pdf: "books/1. Filosofi Teras.pdf", rating: 4.8 },
         { id: "B2", title: "This is Marketing", author: "Seth Godin", category: "Bisnis", img: "covers/this is marketing.png", pdf: "books/2. This is marketing.pdf", rating: 4.6 },
@@ -82,43 +101,32 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: "B16", title: "Think Like a Freak", author: "Steven D. Levitt", category: "Self-Improvement", img: "covers/think like a freak.png", pdf: "books/16. Think like a freak.pdf", rating: 4.9 }
     ];
 
-    let uploadedBooks = JSON.parse(localStorage.getItem('myUploadedBooks') || '[]');
+    let uploadedBooks = JSON.parse(localStorage.getItem(`uploads_${currentUser}`)) || [];
     let allBooks = [...uploadedBooks.reverse(), ...defaultBooks]; 
 
-    // --- 3. RENDER BUKU ---
-    const bookGrid = document.getElementById('bookGrid');
+    // --- 4. RENDER BUKU ---
+    const bookGrid = document.getElementById('bookGrid'); 
     const searchInput = document.getElementById('searchInput');
-    const categoryFilter = document.getElementById('categoryFilter');
+    const dashboardSort = document.getElementById('dashboardSort');
+    const categoryTabs = document.querySelectorAll('.btn-cat');
 
-    // Load Data
     const userRatings = JSON.parse(localStorage.getItem('userRatings') || '{}');
     let savedBooks = JSON.parse(localStorage.getItem(`savedBooks_${currentUser}`) || '[]');
     let readingHistory = JSON.parse(localStorage.getItem(`readingHistory_${currentUser}`) || '{}');
 
-    // Helper: Cek Status Buku
     function getBookStatus(book) {
         if (readingHistory[book.title] === 'finished') return 'finished';
         if (readingHistory[book.title] === 'reading') return 'reading';
         if (savedBooks.some(b => b.id.toString() === book.id.toString())) return 'want';
         return 'none';
     }
-
-    // Helper: Simpan Status
     function setBookStatus(book, newStatus) {
-        if (newStatus === 'want') {
-            if (!savedBooks.some(b => b.id.toString() === book.id.toString())) savedBooks.push(book);
-            delete readingHistory[book.title];
-        } else if (newStatus === 'reading') {
-            readingHistory[book.title] = 'reading';
-            savedBooks = savedBooks.filter(b => b.id.toString() !== book.id.toString());
-        } else if (newStatus === 'finished') {
-            readingHistory[book.title] = 'finished';
-            savedBooks = savedBooks.filter(b => b.id.toString() !== book.id.toString());
-        } else {
-            // Case 'none' -> Hapus semua
-            delete readingHistory[book.title];
-            savedBooks = savedBooks.filter(b => b.id.toString() !== book.id.toString());
-        }
+        if (!currentUser) return;
+        delete readingHistory[book.title];
+        savedBooks = savedBooks.filter(b => b.id.toString() !== book.id.toString());
+        if (newStatus === 'want') savedBooks.push(book);
+        else if (newStatus === 'reading') readingHistory[book.title] = 'reading';
+        else if (newStatus === 'finished') readingHistory[book.title] = 'finished';
         localStorage.setItem(`savedBooks_${currentUser}`, JSON.stringify(savedBooks));
         localStorage.setItem(`readingHistory_${currentUser}`, JSON.stringify(readingHistory));
     }
@@ -127,38 +135,50 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!bookGrid) return;
         bookGrid.innerHTML = '';
 
-        const filtered = allBooks.filter(b => {
+        let filtered = allBooks.filter(b => {
             const matchText = b.title.toLowerCase().includes(filterText.toLowerCase()) || 
                               b.author.toLowerCase().includes(filterText.toLowerCase());
-            const matchCat = category === 'all' || b.category === category;
+            
+            let matchCat = true;
+            if (category === 'all') matchCat = true;
+            else if (['want', 'reading', 'finished'].includes(category)) {
+                const status = getBookStatus(b);
+                if (category === 'want') matchCat = (status === 'want');
+                if (category === 'reading') matchCat = (status === 'reading');
+                if (category === 'finished') matchCat = (status === 'finished');
+            } else {
+                matchCat = (b.category === category);
+            }
             return matchText && matchCat;
         });
 
+        const sortVal = dashboardSort ? dashboardSort.value : 'default';
+        if (sortVal === 'az') filtered.sort((a,b) => a.title.localeCompare(b.title));
+        if (sortVal === 'newest') filtered.reverse();
+        if (sortVal === 'rating') filtered.sort((a,b) => b.rating - a.rating);
+
         if (filtered.length === 0) {
-            bookGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; margin-top:40px; color:var(--text-tertiary);"><p>Buku tidak ditemukan.</p></div>`;
+            bookGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--text-tertiary);"><p>Buku tidak ditemukan.</p></div>`;
             return;
         }
 
         filtered.forEach(book => {
             const card = document.createElement('div');
             card.className = 'book-card';
+            
             const imgSrc = book.img || book.image || book.cover;
             
             const myRating = userRatings[book.title];
             const currentScore = myRating ? myRating.score : (book.rating || 0);
-            const displayScore = parseFloat(currentScore).toFixed(1);
             
             let starsHTML = '';
             for (let i = 1; i <= 5; i++) {
-                let fillClass = '';
-                if (Math.round(currentScore) >= i) fillClass = myRating ? 'user-filled' : 'filled';
-                starsHTML += `<i class="fas fa-star ${fillClass}"></i>`;
+                let fillClass = Math.round(currentScore) >= i ? 'filled' : '';
+                starsHTML += `<i class="fas fa-star ${fillClass}" style="color: ${Math.round(currentScore) >= i ? '#f59e0b' : '#e5e7eb'}"></i>`;
             }
 
             const status = getBookStatus(book);
-            let btnClass = '';
-            let btnIcon = 'far fa-bookmark'; // Default (None)
-
+            let btnClass = '', btnIcon = 'far fa-bookmark';
             if (status === 'want') { btnClass = 'want'; btnIcon = 'fas fa-bookmark'; }
             else if (status === 'reading') { btnClass = 'reading'; btnIcon = 'fas fa-book-reader'; }
             else if (status === 'finished') { btnClass = 'finished'; btnIcon = 'fas fa-check-circle'; }
@@ -169,10 +189,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         <i class="${btnIcon}"></i>
                     </button>
                     <div class="status-dropdown">
-                        <button class="status-option opt-want" data-val="want"><i class="fas fa-bookmark"></i> Ingin Dibaca</button>
-                        <button class="status-option opt-reading" data-val="reading"><i class="fas fa-book-reader"></i> Sedang Dibaca</button>
-                        <button class="status-option opt-finished" data-val="finished"><i class="fas fa-check-circle"></i> Sudah Selesai</button>
-                        <button class="status-option opt-remove" data-val="none"><i class="fas fa-trash-alt"></i> Hapus Status</button>
+                        <button class="status-option" data-val="want"><i class="fas fa-bookmark"></i> Ingin Dibaca</button>
+                        <button class="status-option" data-val="reading"><i class="fas fa-book-reader"></i> Sedang Dibaca</button>
+                        <button class="status-option" data-val="finished"><i class="fas fa-check-circle"></i> Selesai</button>
+                        <button class="status-option" data-val="none"><i class="fas fa-trash-alt"></i> Hapus</button>
                     </div>
                 </div>
 
@@ -183,136 +203,114 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p>${book.author}</p>
                     <div class="card-footer">
                         <div class="interactive-stars">${starsHTML}</div>
-                        <span class="rating-number">${displayScore || 4.5}</span>
+                        <span class="rating-number">${parseFloat(currentScore).toFixed(1)}</span>
                     </div>
                 </div>
             `;
             
-            // LOGIKA BARU: Klik Tombol -> Buka Menu
             const wrapper = card.querySelector('.book-status-wrapper');
             const toggleBtn = wrapper.querySelector('.btn-status-toggle');
             const dropdown = wrapper.querySelector('.status-dropdown');
 
             toggleBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Biar modal gak kebuka
-                if (!currentUser) { if(confirm("Login dulu yuk!")) window.location.href='login.html'; return; }
+                e.stopPropagation();
+                if (!currentUser) return alert('Silakan login terlebih dahulu!');
                 
-                // Tutup dropdown lain biar gak numpuk
                 document.querySelectorAll('.status-dropdown').forEach(d => {
-                    if (d !== dropdown) d.classList.remove('active');
+                    if(d !== dropdown) d.classList.remove('active');
                 });
-                
-                // Toggle Menu ini
                 dropdown.classList.toggle('active');
             });
 
-            // Klik Pilihan Menu
             wrapper.querySelectorAll('.status-option').forEach(opt => {
                 opt.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const newVal = opt.getAttribute('data-val');
-                    setBookStatus(book, newVal);
+                    setBookStatus(book, opt.dataset.val);
                     dropdown.classList.remove('active');
-                    renderBooks(searchInput.value, categoryFilter.value); // Refresh Tampilan
+                    renderBooks(searchInput.value, document.querySelector('.btn-cat.active').dataset.cat);
                 });
             });
 
             card.addEventListener('click', (e) => {
-                if (e.target.closest('.book-status-wrapper')) return;
-                openModal(book);
+                if (!e.target.closest('.book-status-wrapper')) openModal(book);
             });
 
             bookGrid.appendChild(card);
         });
     }
 
-    // Klik luar -> Tutup Semua Dropdown
     document.addEventListener('click', (e) => {
-        if(!e.target.closest('.book-status-wrapper')) {
-            document.querySelectorAll('.status-dropdown').forEach(d => d.classList.remove('active'));
-        }
+        if(!e.target.closest('.book-status-wrapper')) document.querySelectorAll('.status-dropdown').forEach(d => d.classList.remove('active'));
     });
 
-    // --- 4. MODAL & RATING LOGIC ---
+    // --- 5. MODAL LOGIC ---
     const modal = document.getElementById('bookModal');
     const feedback = document.getElementById('ratingFeedback');
-    const ratingInput = document.getElementById('modalRatingInput');
 
     function openModal(book) {
         if (!modal) return;
-        document.getElementById('modalImg').src = book.img || book.image || book.cover;
+        document.getElementById('modalImg').src = book.img || book.image;
         document.getElementById('modalTitle').innerText = book.title;
         document.getElementById('modalAuthor').innerText = book.author;
         document.getElementById('modalBadges').innerHTML = `<span class="badge-cat">${book.category}</span>`;
         
         const readBtn = document.getElementById('readBtn');
-        const newReadBtn = readBtn.cloneNode(true);
-        readBtn.parentNode.replaceChild(newReadBtn, readBtn);
-
-        newReadBtn.onclick = () => {
-            const pdfLink = book.file || book.pdf || book.source;
-            if (pdfLink) {
-                if (currentUser) {
-                    setBookStatus(book, 'reading'); // Auto set Reading
-                    const safeTitle = encodeURIComponent(book.title);
-                    const safeSource = encodeURIComponent(pdfLink);
-                    window.location.href = `read.html?title=${safeTitle}&source=${safeSource}`;
-                } else {
-                    if(confirm("Silakan login dulu.")) window.location.href = 'login.html';
-                }
-            } else { alert("File tidak tersedia."); }
+        readBtn.onclick = () => {
+            if (book.fileData) {
+                const safeTitle = encodeURIComponent(book.title);
+                const safeSource = encodeURIComponent(book.fileData);
+                window.location.href = `read.html?title=${safeTitle}&source=${safeSource}`;
+            } else if (book.pdf) {
+                const safeTitle = encodeURIComponent(book.title);
+                const safeSource = encodeURIComponent(book.pdf);
+                window.location.href = `read.html?title=${safeTitle}&source=${safeSource}`;
+            } else {
+                alert("File buku tidak ditemukan!");
+            }
         };
 
         const modalStars = document.querySelectorAll('#modalStars i');
         const myRating = userRatings[book.title];
-        let currentVal = myRating ? myRating.score : 0;
+        
+        updateVisualStars(myRating ? myRating.score : 0);
+        if(feedback) feedback.innerText = myRating ? "Rating tersimpan." : "Beri penilaian.";
 
-        updateVisualStars(currentVal);
-        ratingInput.value = currentVal > 0 ? currentVal : '';
-        feedback.innerText = myRating ? "Rating tersimpan." : "Beri penilaian.";
-
-        modalStars.forEach(star => { star.onclick = function() { saveRating(this.getAttribute('data-val')); } });
-
-        ratingInput.oninput = function() {
-            let val = parseFloat(this.value);
-            if (isNaN(val)) val = 0; if (val > 5) val = 5; if (val < 0) val = 0;
-            saveRating(val);
-        };
-
-        function saveRating(val) {
-            if (!currentUser) { if(confirm("Login dulu!")) window.location.href = 'login.html'; return; }
-            userRatings[book.title] = { score: parseFloat(val), date: new Date().toISOString() };
-            localStorage.setItem('userRatings', JSON.stringify(userRatings));
-            
-            setBookStatus(book, 'finished'); // Auto set Finished
-
-            ratingInput.value = val;
-            updateVisualStars(val);
-            feedback.innerText = "Terima kasih! Rating tersimpan.";
-            renderBooks(searchInput.value, categoryFilter.value);
-        }
+        modalStars.forEach(star => {
+            star.onclick = function() {
+                if(!currentUser) return alert("Login dulu!");
+                const val = this.dataset.val;
+                userRatings[book.title] = { score: parseFloat(val), date: new Date().toISOString() };
+                localStorage.setItem('userRatings', JSON.stringify(userRatings));
+                updateVisualStars(val);
+                if(feedback) feedback.innerText = "Terima kasih! Rating tersimpan.";
+                renderBooks(searchInput.value, document.querySelector('.btn-cat.active').dataset.cat);
+            };
+        });
 
         modal.classList.add('active');
     }
 
     function updateVisualStars(val) {
-        const stars = document.querySelectorAll('#modalStars i');
-        stars.forEach(s => {
-            const sVal = parseInt(s.getAttribute('data-val'));
-            s.classList.remove('active'); s.style.background = ''; s.style.webkitBackgroundClip = ''; s.style.webkitTextFillColor = '';
-            if (val >= sVal) s.classList.add('active');
-            else if (val > sVal - 1) {
-                const percentage = (val - (sVal - 1)) * 100;
-                s.style.background = `linear-gradient(90deg, #f59e0b ${percentage}%, #e5e7eb ${percentage}%)`;
-                s.style.webkitBackgroundClip = 'text'; s.style.webkitTextFillColor = 'transparent';
-            }
+        document.querySelectorAll('#modalStars i').forEach(s => {
+            s.style.color = val >= parseInt(s.dataset.val) ? '#f59e0b' : '#e5e7eb';
         });
     }
 
     window.closeModal = () => modal.classList.remove('active');
     if(modal) modal.addEventListener('click', (e) => { if(e.target === modal) window.closeModal(); });
 
+    // Initial Render
     renderBooks();
-    if(searchInput) searchInput.addEventListener('input', (e) => renderBooks(e.target.value, categoryFilter.value));
-    if(categoryFilter) categoryFilter.addEventListener('change', (e) => renderBooks(searchInput.value, e.target.value));
+    
+    // Listeners
+    if(searchInput) searchInput.addEventListener('input', (e) => renderBooks(e.target.value, document.querySelector('.btn-cat.active').dataset.cat));
+    if(dashboardSort) dashboardSort.addEventListener('change', () => renderBooks(searchInput.value, document.querySelector('.btn-cat.active').dataset.cat));
+    
+    categoryTabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelector('.btn-cat.active').classList.remove('active');
+            btn.classList.add('active');
+            renderBooks(searchInput.value, btn.dataset.cat);
+        });
+    });
 });
