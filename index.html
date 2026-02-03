@@ -22,9 +22,14 @@
                 <span>Era Baru</span>
             </a>
             
-            <button class="menu-toggle" id="mobileMenuBtn">
-                <i class="fas fa-bars"></i>
-            </button>
+            <div class="mobile-nav-actions">
+                <button id="mobileThemeToggle" class="theme-btn" title="Ganti Tema">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="menu-toggle" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
     
             <div class="nav-menu" id="navMenu">
                 <div class="nav-links">
@@ -34,7 +39,7 @@
                 </div>
                 
                 <div class="nav-right">
-                    <button id="themeToggle" class="theme-btn" title="Ganti Tema">
+                    <button id="themeToggle" class="theme-btn desktop-only" title="Ganti Tema">
                         <i class="fas fa-moon"></i>
                     </button>
     
@@ -51,7 +56,7 @@
                             <a href="#" id="logoutBtn" class="dropdown-item logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
                         </div>
                     </div>
-
+                    
                     <div id="loginBtnContainer" style="display: none;">
                         <a href="login.html" class="btn-upload-inline" style="border: 1px solid var(--text-primary);">Masuk</a>
                     </div>

@@ -1,22 +1,44 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 0. DARK MODE ---
-    const themeToggle = document.getElementById('themeToggle');
+    // --- 0. DARK MODE (DUAL BUTTON LOGIC) ---
+    // Ambil semua tombol tema (desktop & mobile)
+    const themeToggles = document.querySelectorAll('.theme-btn');
     const root = document.documentElement;
-    const icon = themeToggle ? themeToggle.querySelector('i') : null;
 
-    if(localStorage.getItem('theme') === 'dark') {
+    // Load Theme Awal
+    if (localStorage.getItem('theme') === 'dark') {
         root.setAttribute('data-theme', 'dark');
-        if(icon) icon.classList.replace('fa-moon', 'fa-sun');
-    }
-    if(themeToggle) {
-        themeToggle.addEventListener('click', () => {
-            const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-            root.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
-            if(icon) { icon.classList.toggle('fa-moon'); icon.classList.toggle('fa-sun'); }
+        // Update semua ikon jadi matahari
+        themeToggles.forEach(btn => {
+            const icon = btn.querySelector('i');
+            if(icon) { icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); }
         });
     }
+
+    // Event Listener untuk SEMUA tombol tema
+    themeToggles.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const currentTheme = root.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            root.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update ikon di SEMUA tombol secara bersamaan
+            themeToggles.forEach(b => {
+                const icon = b.querySelector('i');
+                if (icon) {
+                    if (newTheme === 'dark') {
+                        icon.classList.remove('fa-moon');
+                        icon.classList.add('fa-sun');
+                    } else {
+                        icon.classList.remove('fa-sun');
+                        icon.classList.add('fa-moon');
+                    }
+                }
+            });
+        });
+    });
 
     // --- 1. MOBILE MENU LOGIC ---
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -34,34 +56,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 2. AUTH & USER INFO (PERBAIKAN FOTO PROFIL) ---
+    // --- 2. AUTH & USER INFO (AVATAR FIX) ---
     const currentUser = localStorage.getItem('currentUser'); 
     const profileMenuWrapper = document.getElementById('profileMenuWrapper');
     const loginBtnContainer = document.getElementById('loginBtnContainer');
     const userDisplay = document.getElementById('userDisplay');
 
     if (currentUser) {
-        // User Login
         if(profileMenuWrapper) profileMenuWrapper.style.display = 'flex';
         if(loginBtnContainer) loginBtnContainer.style.display = 'none';
         if(userDisplay) userDisplay.innerText = `Halo, ${currentUser}`;
 
-        // --- LOGIKA UPDATE AVATAR DI SINI ---
+        // Avatar Logic
         const avatarImg = document.querySelector('.profile-trigger .avatar');
         const savedAvatar = localStorage.getItem(`avatar_${currentUser}`);
-
         if (avatarImg) {
-            if (savedAvatar) {
-                // Jika ada foto tersimpan, pakai itu
-                avatarImg.src = savedAvatar;
-            } else {
-                // Jika tidak ada, pakai inisial nama User yang Login
-                avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser)}&background=random&color=fff`;
-            }
+            avatarImg.src = savedAvatar ? savedAvatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser)}&background=random&color=fff`;
         }
-        // -------------------------------------
 
-        // Profile Dropdown Logic
         const profileTrigger = document.getElementById('profileTrigger');
         const profileDropdown = document.getElementById('profileDropdown');
         if(profileTrigger && profileDropdown) {
@@ -76,12 +88,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     } else {
-        // User Tamu
         if(profileMenuWrapper) profileMenuWrapper.style.display = 'none';
         if(loginBtnContainer) loginBtnContainer.style.display = 'block';
     }
 
-    // --- 3. DATA BUKU (16 ORIGINAL - FILE LOKAL) ---
+    // --- 3. DATA BUKU (16 ORIGINAL - LOCAL FILE) ---
     const defaultBooks = [
         { id: "B1", title: "Filosofi Teras", author: "Henry Manampiring", category: "Filsafat", img: "covers/filosofi teras.png", pdf: "books/1. Filosofi Teras.pdf", rating: 4.8 },
         { id: "B2", title: "This is Marketing", author: "Seth Godin", category: "Bisnis", img: "covers/this is marketing.png", pdf: "books/2. This is marketing.pdf", rating: 4.6 },
@@ -138,7 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let filtered = allBooks.filter(b => {
             const matchText = b.title.toLowerCase().includes(filterText.toLowerCase()) || 
                               b.author.toLowerCase().includes(filterText.toLowerCase());
-            
             let matchCat = true;
             if (category === 'all') matchCat = true;
             else if (['want', 'reading', 'finished'].includes(category)) {
@@ -146,9 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (category === 'want') matchCat = (status === 'want');
                 if (category === 'reading') matchCat = (status === 'reading');
                 if (category === 'finished') matchCat = (status === 'finished');
-            } else {
-                matchCat = (b.category === category);
-            }
+            } else { matchCat = (b.category === category); }
             return matchText && matchCat;
         });
 

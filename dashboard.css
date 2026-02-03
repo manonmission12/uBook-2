@@ -1,4 +1,4 @@
-/* --- DASHBOARD STYLING --- */
+/* --- DASHBOARD STYLING (DESKTOP BASE) --- */
 
 /* 1. NAVBAR FIXED */
 .navbar {
@@ -7,10 +7,12 @@
     position: sticky; top: 0; z-index: 1000;
     padding: 0.8rem 0;
 }
+
 .nav-container {
     width: 90%; max-width: 1200px; margin: 0 auto;
     display: flex; justify-content: space-between; align-items: center;
 }
+
 .brand {
     font-size: 1.4rem; font-weight: 800; color: var(--text-primary);
     text-decoration: none; display: flex; align-items: center; gap: 10px;
@@ -19,26 +21,42 @@
 
 .nav-menu { display: flex; align-items: center; gap: 30px; }
 .nav-links { display: flex; gap: 20px; }
-.nav-link { text-decoration: none; color: var(--text-secondary); font-weight: 600; transition: 0.2s; font-size: 0.95rem; }
+.nav-link { 
+    text-decoration: none; color: var(--text-secondary); font-weight: 600; 
+    transition: 0.2s; font-size: 0.95rem; 
+}
 .nav-link:hover, .nav-link.active { color: #10b981; }
 .nav-right { display: flex; align-items: center; gap: 15px; }
 
-/* Tombol Dark Mode */
+/* STYLE TOMBOL DARK MODE */
 .theme-btn {
     background: transparent; border: 1px solid var(--border);
     color: var(--text-primary); width: 38px; height: 38px;
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
     cursor: pointer; transition: all 0.3s ease;
 }
-.theme-btn:hover { background-color: var(--bg-input); color: #f59e0b; transform: rotate(15deg); }
+.theme-btn:hover { 
+    background-color: var(--bg-input); 
+    color: #f59e0b; 
+    transform: rotate(15deg); 
+}
 
-.menu-toggle { display: none; background: none; border: none; font-size: 1.5rem; color: var(--text-primary); cursor: pointer; }
+/* --- MOBILE ACTIONS (HIDDEN DI DESKTOP) --- */
+/* Ini kuncinya: Memastikan tombol burger & dark mode mobile TIDAK MUNCUL di Laptop */
+.mobile-nav-actions { 
+    display: none; 
+}
+.menu-toggle { 
+    display: none; background: none; border: none; 
+    font-size: 1.5rem; color: var(--text-primary); cursor: pointer; 
+}
 
-/* 2. LAYOUT */
+/* 2. LAYOUT UTAMA */
 .dashboard-content { 
     width: 100%; max-width: 1200px; margin: 0 auto; padding: 2rem 5% 4rem; 
     box-sizing: border-box; min-height: 80vh;
 }
+
 .header-section { text-align: center; margin-bottom: 2.5rem; }
 .page-title { font-size: 2.5rem; margin-bottom: 10px; color: var(--text-primary); font-weight: 800; }
 .page-subtitle { color: var(--text-secondary); font-size: 1.1rem; }
@@ -49,6 +67,7 @@
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
     gap: 25px; width: 100%; 
 }
+
 .book-card {
     background: var(--bg-card); border-radius: 12px; 
     border: 1px solid var(--border); transition: all 0.3s ease;
@@ -61,15 +80,18 @@
     width: 100%; height: 280px; object-fit: cover; 
     border-bottom: 1px solid var(--border);
 }
+
 .book-info { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
 .book-info h3 { font-size: 1rem; line-height: 1.4; color: var(--text-primary); margin-bottom: 6px; font-weight: 700; }
 .book-info p { font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 15px 0; }
+
 .tag {
     font-size: 0.7rem; padding: 4px 10px; border-radius: 4px;
     background: var(--bg-input); color: var(--text-secondary); 
     font-weight: 700; text-transform: uppercase; border: 1px solid var(--border);
     width: fit-content; margin-bottom: 8px;
 }
+
 .card-footer { 
     margin-top: auto; display: flex; justify-content: space-between; 
     align-items: center; padding-top: 10px; border-top: 1px solid var(--border); 
@@ -109,6 +131,7 @@
 .profile-menu { position: relative; }
 .profile-trigger { display: flex; align-items: center; gap: 10px; cursor: pointer; }
 .avatar { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--border); object-fit: cover; }
+
 .dropdown-menu {
     position: absolute; top: 50px; right: 0; width: 200px;
     background: var(--bg-card); border: 1px solid var(--border);
@@ -119,7 +142,7 @@
 .dropdown-item { padding: 12px 15px; text-decoration: none; color: var(--text-primary); display: flex; gap: 10px; align-items: center; transition: 0.2s; }
 .dropdown-item:hover { background: var(--bg-input); }
 
-/* 6. MODAL & TOMBOL */
+/* 6. MODAL & STATUS BUTTON */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; backdrop-filter: blur(3px); box-sizing: border-box; }
 .modal-overlay.active { display: flex; }
 .modal-content { background: var(--bg-card); width: 100%; max-width: 800px; border-radius: 12px; display: flex; overflow: hidden; max-height: 90vh; }
