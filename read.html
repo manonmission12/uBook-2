@@ -4,117 +4,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>uBook Reader</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script>
+        if (window.innerWidth <= 768) {
+            window.location.href = "read-mobile.html" + window.location.search;
+        }
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf_viewer.min.css">
     <link rel="stylesheet" href="read.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 </head>
 <body>
+
     <nav class="reader-nav">
         <div class="nav-left">
-            <a href="index.html" class="nav-btn" title="Kembali"><i class="fas fa-arrow-left"></i></a>
-            <h3 id="bookTitleDisplay">Memuat Buku...</h3>
+            <a href="index.html" class="nav-btn"><i class="fas fa-arrow-left"></i></a>
+            <h3 id="bookTitleDisplay">Memuat...</h3>
         </div>
         
         <div class="nav-center">
-            <button id="prevBtn" class="nav-btn" title="Halaman Sebelumnya"><i class="fas fa-chevron-left"></i></button>
-            
-            <div class="page-search-box">
+            <button id="prevBtn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+            <div class="page-info">
                 <input type="number" id="pageInput" value="1" min="1">
-                <span id="pageTotal">/ -</span>
+                <span>/ <span id="pageTotal">--</span></span>
             </div>
-            
-            <button id="nextBtn" class="nav-btn" title="Halaman Selanjutnya"><i class="fas fa-chevron-right"></i></button>
-            <button id="finishBtn" class="nav-btn finish-btn" style="display: none;">Selesai <i class="fas fa-check"></i></button>
+            <button id="nextBtn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
         </div>
 
         <div class="nav-right">
+            <button id="moveBtn" class="tool-btn active" title="Pilih Teks / Geser"><i class="fas fa-mouse-pointer"></i></button>
+            <button id="highlightBtn" class="tool-btn" title="Stabilo"><i class="fas fa-highlighter"></i></button>
+            <button id="eraserBtn" class="tool-btn" title="Hapus"><i class="fas fa-eraser"></i></button>
             
-            <div class="app-nav-tools">
-                <a href="index.html" class="tool-btn" title="Beranda"><i class="fas fa-home"></i></a>
-                <a href="profile.html" class="tool-btn" title="Profil Saya"><i class="fas fa-user"></i></a>
-            </div>
-
-            <div class="separator"></div>
-
-            <div class="annotation-tools">
-                <button id="undoBtn" class="tool-btn" title="Undo (Ctrl+Z)"><i class="fas fa-undo"></i></button>
-                <button id="redoBtn" class="tool-btn" title="Redo (Ctrl+Y)"><i class="fas fa-redo"></i></button>
-                <div class="separator-small"></div>
-                
-                <button id="highlightBtn" class="tool-btn" title="Stabilo"><i class="fas fa-highlighter"></i></button>
-                <button id="moveBtn" class="tool-btn" title="Geser Stabilo"><i class="fas fa-arrows-alt"></i></button> <button id="eraserBtn" class="tool-btn" title="Penghapus"><i class="fas fa-eraser"></i></button>
-                
-                <button id="clearPageBtn" class="tool-btn" title="Bersihkan Halaman"><i class="fas fa-trash-alt"></i></button>
-            </div>
+            <div class="sep"></div>
             
-            <div class="zoom-controls">
-                <button id="zoomOut" class="tool-btn"><i class="fas fa-minus"></i></button>
-                <span id="zoomLevel">100%</span>
-                <button id="zoomIn" class="tool-btn"><i class="fas fa-plus"></i></button>
-            </div>
+            <button id="undoBtn" class="tool-btn" title="Undo"><i class="fas fa-undo"></i></button>
+            <button id="redoBtn" class="tool-btn" title="Redo"><i class="fas fa-redo"></i></button>
+            
+            <div class="sep"></div>
+            
+            <button id="zoomOut" class="tool-btn"><i class="fas fa-minus"></i></button>
+            <span id="zoomLevel">100%</span>
+            <button id="zoomIn" class="tool-btn"><i class="fas fa-plus"></i></button>
+            
+            <button id="finishBtn" class="finish-btn" style="display:none;">Selesai</button>
         </div>
     </nav>
 
-    <div class="main-reader-layout">
-        <aside class="page-nav-sidebar">
-            <div id="pageNavList" class="page-nav-list"></div>
+    <div class="main-layout">
+        <aside class="sidebar left">
+            <div class="sidebar-header">Daftar Halaman</div>
+            <div id="thumbnailContainer" class="thumbnail-list"></div>
         </aside>
 
-        <div class="pdf-container" id="pdfContainer">
-            <div class="pdf-wrapper" id="pdfWrapper">
+        <main class="content-area" id="pdfContainer">
+            <div class="pdf-wrapper">
                 <canvas id="the-canvas"></canvas>
                 <div id="text-layer" class="textLayer"></div>
-                <div id="annotation-layer" class="annotation-layer">
-                    <canvas id="highlight-canvas"></canvas>
-                </div>
+                <canvas id="highlight-canvas" class="highlight-layer"></canvas>
             </div>
-        </div>
+        </main>
 
-        <aside class="notes-sidebar">
-            <div class="notes-header">
-                <h3><i class="fas fa-sticky-note"></i> Catatan</h3>
-                <span id="notePageLabel" class="note-page-label">Hal 1</span>
-            </div>
-            <div id="notesList" class="notes-list">
-                <div class="empty-notes">Belum ada catatan.</div>
-            </div>
-            <div class="notes-input-area">
-                <textarea id="noteInput" placeholder="Tulis catatan..."></textarea>
-                <button id="addNoteBtn" class="btn-add-note">
-                    <i class="fas fa-paper-plane"></i> Simpan
-                </button>
+        <aside class="sidebar right">
+            <div class="sidebar-header">Catatan</div>
+            <div class="notes-wrapper">
+                <div id="notesList" class="notes-list"></div>
+                <div class="notes-input">
+                    <textarea id="noteInput" placeholder="Tulis catatan..."></textarea>
+                    <button id="addNoteBtn"><i class="fas fa-paper-plane"></i></button>
+                </div>
             </div>
         </aside>
     </div>
-    
+
     <div id="loadingOverlay" class="loading-overlay active">
         <div class="spinner"></div>
-        <p style="margin-top: 10px; color: white;">Memproses...</p>
+        <p style="margin-top:10px; color:white;">Sedang Memuat...</p>
     </div>
 
-    <div id="ratingModal" class="rating-overlay">
-        <div class="rating-card">
-            <i class="fas fa-award rating-icon"></i>
-            <h2>Selesai Membaca!</h2>
-            <div class="rating-container">
-                <div class="star-widget" id="starWidget">
-                    <i class="fas fa-star" data-value="1"></i>
-                    <i class="fas fa-star" data-value="2"></i>
-                    <i class="fas fa-star" data-value="3"></i>
-                    <i class="fas fa-star" data-value="4"></i>
-                    <i class="fas fa-star" data-value="5"></i>
-                </div>
-                <input type="number" id="ratingScore" step="0.1" min="0" max="5" placeholder="0.0" class="rating-num-input">
-            </div>
-            <textarea id="ratingReview" placeholder="Tulis ulasan..."></textarea>
-            <div class="rating-actions">
-                <button id="skipRatingBtn" class="btn-secondary">Tutup</button>
-                <button id="submitRatingBtn" class="btn-primary">Kirim</button>
-            </div>
-        </div>
-    </div>
-    
     <script src="read-script.js"></script>
 </body>
 </html>
